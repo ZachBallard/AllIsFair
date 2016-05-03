@@ -19,20 +19,20 @@ namespace AllIsFair.Models
             return userIdentity;
         }
 
-        public ICollection<Game> Games { get; set; } = new List<Game>();//should change to one game?
+        public virtual Game Game { get; set; } 
     }
 
     public class Game
     {
         public int Id { get; set; }
-        public ICollection<Combatant> Combatants { get; set; } = new List<Combatant>();
-        public ICollection<Tile> Tiles { get; set; } = new List<Tile>();
-        public ICollection<Card> Items { get; set; } = new List<Card>();
-        public ICollection<Card> Purchases { get; set; } = new List<Card>();
-        public ICollection<Card> Events { get; set; } = new List<Card>();
-        public ICollection<Effect> Effects { get; set; } = new List<Effect>();
+        public virtual ICollection<Combatant> Combatants { get; set; } = new List<Combatant>();
+        public virtual ICollection<Tile> Tiles { get; set; } = new List<Tile>();
+        public virtual ICollection<Card> Items { get; set; } = new List<Card>();
+        public virtual ICollection<Card> Purchases { get; set; } = new List<Card>();
+        public virtual ICollection<Card> Events { get; set; } = new List<Card>();
+        public virtual ICollection<Effect> Effects { get; set; } = new List<Effect>();
 
-        public ApplicationUser User { get; set; } //but that makes it a one to one issue?
+        public virtual  ApplicationUser User { get; set; } //but that makes it a one to one issue?
     }
 
     public class Combatant
@@ -113,5 +113,14 @@ namespace AllIsFair.Models
         {
             return new ApplicationDbContext();
         }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUser>().HasOptional(u => u.Game).WithRequired(g => g.User);
+        }
+
+        public DbSet<Game> Games { get; set; }
     }
 }

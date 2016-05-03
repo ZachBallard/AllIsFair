@@ -162,7 +162,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllIsFairContext.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -182,6 +181,10 @@
     <Compile Include="Migrations\201605031612529_game.cs" />
     <Compile Include="Migrations\201605031612529_game.Designer.cs">
       <DependentUpon>201605031612529_game.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605031936288_fixrelationship.cs" />
+    <Compile Include="Migrations\201605031936288_fixrelationship.Designer.cs">
+      <DependentUpon>201605031936288_fixrelationship.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -277,6 +280,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605031612529_game.resx">
       <DependentUpon>201605031612529_game.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605031936288_fixrelationship.resx">
+      <DependentUpon>201605031936288_fixrelationship.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

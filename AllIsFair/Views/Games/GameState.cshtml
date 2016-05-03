@@ -9,16 +9,12 @@
 </div>
 
 <div class="row map">
-    <div class="col-xs-1"></div>
-    <div class="col-xs-10">
         @foreach (var tile in Model.Tiles)
         {
-            <div class="col-xs-1">
-                <img class="img-responsive tileimg" src="@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
+            <div class="col-xs-1" style="padding: 0px;">
+                <img class="img-responsive tileimg" style="width: 100%;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
             </div>
         }
-    </div>
-    <div class="col-xs-1"></div>
 </div>
 
 <div class="row">

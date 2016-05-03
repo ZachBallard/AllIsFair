@@ -8,14 +8,14 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Razor.Generator;
 using AllIsFair.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.Provider;
 
 namespace AllIsFair.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly AllIsFairContext db = new AllIsFairContext();
-        private readonly ApplicationDbContext userdb = new ApplicationDbContext();
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
 
         private Game _game = null;
 
@@ -23,50 +23,46 @@ namespace AllIsFair.Controllers
         {
             get
             {
-                var currentUser = User.Identity;
-                var currentUserInfo = userdb.Users.FirstOrDefault(x => x.Id == currentUser.Name);
-                _game = currentUserInfo.Games.FirstOrDefault();
-                if (_game == null)
+                var currentUserId = User.Identity.GetUserId();
+                var user = db.Users.Include(x=>x.Game).FirstOrDefault(x => x.Id == currentUserId);
+
+                if (user == null) return null;
+
+                _game = user.Game;
+                if (_game != null) return _game;
+
+                _game = new Game()
                 {
-                    _game = new Game()
-                    {
-                        Tiles = GenerateMap(12, 12)
-                    };
-                    db.Games.Add(_game);
-                    db.SaveChanges();
-                }
+                    Tiles = GenerateMap(12, 12),
+                    User = user
+
+                };
+                user.Game = _game;
+                db.SaveChanges();
                 return _game;
             }
         }
 
         private ICollection<Tile> GenerateMap(int x, int y)
         {
-            var Map = new List<Tile>();
+            var map = new List<Tile>();
 
-            for (int i = 1; i < x; i++)
+            for (int i = 1; i <= x; i++)
             {
-                for (int j = 1; j < y; j++)
+                for (int j = 1; j <= y; j++)
                 {
-                    if (i == 1 || i == 12)
+                    string file = "Plains.png";
+                    if (i == 1 || i == 12 || j == 1 || j == 12)
                     {
-                        Map.Add(new Tile() { GraphicName = @"~\Graphics\Beach.png", X = i, Y = j });
+                        file = "Beach.png";
                     }
-                    else
-                    {
-                        if (j == 1 || j == 12)
-                        {
-                            Map.Add(new Tile() { GraphicName = @"~\Graphics\Beach.png", X = i, Y = j });
-                        }
-                        else
-                        {
-                            Map.Add(new Tile() { GraphicName = @"~\Graphics\Plains.png", X = i, Y = j });
 
-                        }
-                    }
+                    map.Add(new Tile() { GraphicName = file, X = i, Y = j });
+
                 }
             }
 
-            return Map;
+            return map;
         }
 
         // GET: Game
