@@ -1,0 +1,26 @@
+﻿@model AllIsFair.Models.GameInfo
+
+@{
+    ViewBag.Title = "GameState";
+}
+
+<div class="row">
+    <div class="topbar"></div>
+</div>
+
+<div class="row map">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10">
+        @foreach (var tile in Model.Tiles)
+        {
+            <div class="col-xs-1">
+                <img class="img-responsive tileimg" src="@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
+            </div>
+        }
+    </div>
+    <div class="col-xs-1"></div>
+</div>
+
+<div class="row">
+    <div class="bottombar"></div>
+</div>

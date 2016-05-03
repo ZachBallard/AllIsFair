@@ -169,7 +169,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\GameController.cs" />
+    <Compile Include="Controllers\GamesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -185,6 +185,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\GameInfo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -197,6 +198,13 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Graphics\Beach.png" />
+    <Content Include="Graphics\Enemy.png" />
+    <Content Include="Graphics\Forest.png" />
+    <Content Include="Graphics\Mountain.png" />
+    <Content Include="Graphics\Plains.png" />
+    <Content Include="Graphics\Player.png" />
+    <Content Include="Graphics\Town.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -250,6 +258,7 @@
     <Content Include="Views\Game\Details.cshtml" />
     <Content Include="Views\Game\Edit.cshtml" />
     <Content Include="Views\Game\Index.cshtml" />
+    <Content Include="Views\Games\GameState.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

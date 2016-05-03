@@ -19,7 +19,7 @@ namespace AllIsFair.Models
             return userIdentity;
         }
 
-        public ICollection<Game> Games { get; set; } = new List<Game>();
+        public ICollection<Game> Games { get; set; } = new List<Game>();//should change to one game?
     }
 
     public class Game
@@ -32,6 +32,7 @@ namespace AllIsFair.Models
         public ICollection<Card> Events { get; set; } = new List<Card>();
         public ICollection<Effect> Effects { get; set; } = new List<Effect>();
 
+        public ApplicationUser User { get; set; } //but that makes it a one to one issue?
     }
 
     public class Combatant
@@ -42,6 +43,7 @@ namespace AllIsFair.Models
         public int Energy { get; set; } = 10;
         public int X { get; set; }
         public int Y { get; set; }
+        public bool IsPlayer { get; set; }
 
         //constant
         [NotMapped]
@@ -77,6 +79,7 @@ namespace AllIsFair.Models
         public int X { get; set; }
         public int Y { get; set; }
 
+        public Combatant Combatant { get; set; }
     }
 
     public class Card
