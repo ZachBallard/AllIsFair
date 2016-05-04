@@ -31,8 +31,8 @@ textarea {
 .black {
     border: solid black 1px;
 }
-.white {
-    border: solid white 1px;
+.red {
+    border: solid red 3px;
 }
 .bottombar {
     height: 30%;

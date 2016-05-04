@@ -44,6 +44,12 @@ namespace AllIsFair.Models
         public int Y { get; set; }
         public bool IsPlayer { get; set; }
 
+        //original main stats without bonus
+        public int StrengthRaw { get; set; }
+        public int SpeedRaw { get; set; }
+        public int SanityRaw { get; set; }
+        public int PerceptionRaw { get; set; }
+        
         //constant
         [NotMapped]
         public int MaxEquip { get; } = 3;
@@ -51,6 +57,11 @@ namespace AllIsFair.Models
         public int MaxHolding { get; } = 2;
 
         //calculated from cards
+        public int Strength { get; set; }
+        public int Speed { get; set; }
+        public int Sanity { get; set; }
+        public int Perception { get; set; }
+
         [NotMapped]
         public int Threat { get; set; } = 0;
         [NotMapped]
@@ -60,10 +71,9 @@ namespace AllIsFair.Models
         [NotMapped]
         public int CurrentEquip { get; set; } = 0;
 
-        //Main stats (any reach 0 and you lose
-        public int Strength { get; set; }
-        public int Speed { get; set; }
-        public int Sanity { get; set; }
+        
+        //Main stats (any reach 0 and you lose)
+        
         [Required]
         public virtual Game Game { get; set; }
         public virtual ICollection<Card> Cards { get; set; } = new List<Card>();

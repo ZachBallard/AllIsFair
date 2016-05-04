@@ -124,13 +124,34 @@ namespace AllIsFair.Controllers
 
         private GameInfo GetGame()
         {
+            //determine viable moves for player
+            var possibleMoves = new List<Tile>();
+
+            var player = CurrentGame.Combatants.FirstOrDefault(x => x.IsPlayer);
+
+            foreach (var tile in CurrentGame.Tiles)
+            {
+                var x1 = player.X;
+                var y1 = player.Y;
+                var x2 = tile.X;
+                var y2 = tile.Y;
+
+                var distance = CalculateDistance(x1, y1, x2, y2);
+
+                if (distance < player.Speed + 0.5)
+                {
+                    possibleMoves.Add(tile);
+                }
+            }
+
             var model = new GameInfo
             {
                 Id = CurrentGame.Id,
                 AliveCombatants = CurrentGame.Combatants.Count(x => x.Killer == null),
                 Combatants = CurrentGame.Combatants.ToList(),
                 Tiles = CurrentGame.Tiles.ToList(),
-                Player = CurrentGame.Combatants.FirstOrDefault(x => x.IsPlayer)
+                Player = player,
+                PossibleMoves = possibleMoves
             };
 
             return model;
@@ -148,11 +169,12 @@ namespace AllIsFair.Controllers
             {
                 return HttpNotFound();
             }
+
             var x1 = player.X;
             var y1 = player.Y;
             var moveDifference = CalculateDistance(x1, y1, x2, y2);
 
-            if (player == null || moveDifference > player.Speed + 0.5)
+            if (moveDifference > player.Speed + 0.5)
             {
                 return HttpNotFound();
             }

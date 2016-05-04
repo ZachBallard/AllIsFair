@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "GameState";
+
 }
 <div class="container">
     <div class="row">
@@ -15,8 +16,14 @@
     <div class="row map">
         @foreach (var tile in Model.Tiles)
         {
+            var color = "black";
+            if (Model.PossibleMoves.FirstOrDefault(t => t.Id == tile.Id) != null)
+            {
+                color = "red";
+            }
+
             <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y">
-                <img class="img-responsive black" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
+                <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
 
                 @if (tile.Combatant != null)
                 {
