@@ -152,7 +152,7 @@ namespace AllIsFair.Controllers
             var y1 = player.Y;
             var moveDifference = CalculateDistance(x1, y1, x2, y2);
 
-            if (player == null || moveDifference > player.Speed + 1)
+            if (player == null || moveDifference > player.Speed + 0.5)
             {
                 return HttpNotFound();
             }
