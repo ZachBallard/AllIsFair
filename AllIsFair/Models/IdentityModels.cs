@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
@@ -27,10 +28,8 @@ namespace AllIsFair.Models
         public int Id { get; set; }
         public virtual ICollection<Combatant> Combatants { get; set; } = new List<Combatant>();
         public virtual ICollection<Tile> Tiles { get; set; } = new List<Tile>();
-        public virtual ICollection<Card> Items { get; set; } = new List<Card>();
-        public virtual ICollection<Card> Purchases { get; set; } = new List<Card>();
-        public virtual ICollection<Card> Events { get; set; } = new List<Card>();
-        public virtual ICollection<Effect> Effects { get; set; } = new List<Effect>();
+        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
+        public virtual ICollection<Effect> PossibleEffects { get; set; } = new List<Effect>();
 
         public virtual  ApplicationUser User { get; set; } //but that makes it a one to one issue?
     }
@@ -65,21 +64,25 @@ namespace AllIsFair.Models
         public int Strength { get; set; }
         public int Speed { get; set; }
         public int Sanity { get; set; }
-
-        public ICollection<Card> Cards { get; set; } = new List<Card>();
-        public ICollection<Effect> Effects { get; set; } = new List<Effect>();
-        public Combatant Killer { get; set; }
+        [Required]
+        public virtual Game Game { get; set; }
+        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
+        public virtual ICollection<Effect> Effects { get; set; } = new List<Effect>();
+        public virtual Combatant Killer { get; set; }
+        public string GraphicName { get; set; }
     }
 
     public class Tile
     {
         public int Id { get; set; }
         public string GraphicName { get; set; }
-        public ICollection<Card> Cards { get; set; } = new List<Card>();
+        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
         public int X { get; set; }
         public int Y { get; set; }
 
-        public Combatant Combatant { get; set; }
+        [Required]
+        public virtual Game Game { get; set; }
+        public virtual Combatant Combatant { get; set; }
     }
 
     public class Card
@@ -92,7 +95,9 @@ namespace AllIsFair.Models
         public bool IsOnce { get; set; }
         public int Type { get; set; }
 
-        public ICollection<Effect> Effects { get; set; } = new List<Effect>();
+        [Required]
+        public virtual Game Game { get; set; }
+        public virtual ICollection<Effect> Effects { get; set; } = new List<Effect>();
     }
 
     public class Effect
@@ -100,6 +105,9 @@ namespace AllIsFair.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Type { get; set; }
+
+        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
+        public virtual ICollection<Game> Games { get; set; } = new List<Game>();
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

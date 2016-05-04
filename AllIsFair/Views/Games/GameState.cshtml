@@ -3,20 +3,63 @@
 @{
     ViewBag.Title = "GameState";
 }
+<div class="container">
+    <div class="row">
+        <div class="topbar">
+            <div class="col-xs-2 col-xs-offset-1">Alive: @Model.AliveCombatants</div>
+            <div class="col-xs-2 col-xs-offset-1">Dead: @(Model.Combatants.Count - Model.AliveCombatants)</div>
 
-<div class="row">
-    <div class="topbar"></div>
-</div>
+        </div>
+    </div>
 
-<div class="row map">
+    <div class="row map">
         @foreach (var tile in Model.Tiles)
         {
-            <div class="col-xs-1" style="padding: 0px;">
-                <img class="img-responsive tileimg" style="width: 100%;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
+            <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y">
+                <img class="img-responsive black" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
+
+                @if (tile.Combatant != null)
+                {
+                    <img class="img-responsive" style="width: 100%; z-index: 2; position: absolute; top: 0; left: 0;" src="~/Graphics/@tile.Combatant.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
+                }
             </div>
         }
+    </div>
+
+    <div class="row">
+        <div class="bottombar">
+            <div class="col-xs-2 col-xs-offset-1">
+                <h4>PLAYER: @Model.Player.Name</h4>
+                <h6>Strength: @Model.Player.Strength</h6>
+                <h6>Speed: @Model.Player.Speed</h6>
+                <h6>Sanity: @Model.Player.Sanity</h6>
+                <h6>Energy: @Model.Player.Energy</h6>
+                <h6>Equip: @Model.Player.MaxEquip/@Model.Player.CurrentEquip</h6>
+                <h6>Threat: @Model.Player.Threat</h6>
+                <h6>Survivability: @Model.Player.Survivability</h6>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="bottombar"></div>
-</div>
+@section scripts{
+    <script>
+
+        $(".tile").click(function () {
+            TryMove($(this));
+        });
+
+        function TryMove(item) {
+            var x = item.data('x');
+            var y = item.data('y');
+            console.log(x, y);
+            $.ajax({
+                type: "POST",
+                data: { x2: x, y2: y },
+                url: '@Url.Action("TryMove", "Games")'
+            }).done(function (x1, y1, x2, y2) {
+                location.reload(true);
+            });
+        }
+    </script>
+}
