@@ -22,7 +22,7 @@
                 color = "red";
             }
 
-            <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y">
+            <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
                 <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
 
                 @if (tile.Combatant != null)
@@ -40,8 +40,7 @@
                 <h6>Strength: @Model.Player.Strength</h6>
                 <h6>Speed: @Model.Player.Speed</h6>
                 <h6>Sanity: @Model.Player.Sanity</h6>
-                <h6>Energy: @Model.Player.Energy</h6>
-                <h6>Equip: @Model.Player.MaxEquip/@Model.Player.CurrentEquip</h6>
+                <h6>Perception: @Model.Player.Perception</h6>
                 <h6>Threat: @Model.Player.Threat</h6>
                 <h6>Survivability: @Model.Player.Survivability</h6>
             </div>
@@ -52,7 +51,7 @@
 @section scripts{
     <script>
 
-        $(".tile").click(function () {
+        $(".tile").click(function() {
             TryMove($(this));
         });
 
@@ -64,8 +63,20 @@
                 type: "POST",
                 data: { x2: x, y2: y },
                 url: '@Url.Action("TryMove", "Games")'
-            }).done(function (x1, y1, x2, y2) {
-                location.reload(true);
+            }).done(function(canMove, wasCombatant, x1, y1, x2, y2) {
+                if (wasCombatant) {
+                    $.ajax({
+                        type: "POST",
+                        data: { x1, y1, x2, y2 },
+                        url: '@Url.Action("TryAttack", "Games")'
+                    }).done(function(result) {
+                        console.log(result);
+                    });
+                }
+
+                if (canMove) {
+                    location.reload(true);
+                }
             });
         }
     </script>

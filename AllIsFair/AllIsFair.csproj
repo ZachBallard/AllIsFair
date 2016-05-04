@@ -178,6 +178,18 @@
     <Compile Include="Migrations\201605032211583_InitialCreate.Designer.cs">
       <DependentUpon>201605032211583_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605041747486_simplifiedMechanics.cs" />
+    <Compile Include="Migrations\201605041747486_simplifiedMechanics.Designer.cs">
+      <DependentUpon>201605041747486_simplifiedMechanics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605041752313_removedTwoInTile.cs" />
+    <Compile Include="Migrations\201605041752313_removedTwoInTile.Designer.cs">
+      <DependentUpon>201605041752313_removedTwoInTile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605041754351_tileType.cs" />
+    <Compile Include="Migrations\201605041754351_tileType.Designer.cs">
+      <DependentUpon>201605041754351_tileType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\GameInfo.cs" />
@@ -270,6 +282,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201605032211583_InitialCreate.resx">
       <DependentUpon>201605032211583_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605041747486_simplifiedMechanics.resx">
+      <DependentUpon>201605041747486_simplifiedMechanics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605041752313_removedTwoInTile.resx">
+      <DependentUpon>201605041752313_removedTwoInTile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605041754351_tileType.resx">
+      <DependentUpon>201605041754351_tileType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

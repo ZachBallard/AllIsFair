@@ -156,6 +156,13 @@ namespace AllIsFair.Controllers
 
             return model;
         }
+        //Post: Game/TryAttack
+        [HttpPost]
+        public ActionResult TryAttack(int x2, int y2)
+        {
+            //very similar to move but using weapon range or 1 +.5?
+            return Content("You Can Attack!");
+        }
 
         //Post: Game/TryMove
         [HttpPost]
@@ -165,10 +172,9 @@ namespace AllIsFair.Controllers
             var whereFrom = CurrentGame.Tiles.FirstOrDefault(t => t.Combatant == player);
             var whereTo = CurrentGame.Tiles.FirstOrDefault(t => t.X == x2 && t.Y == y2);
 
-            if (whereTo.Combatant != null)
-            {
-                return HttpNotFound();
-            }
+            var wasCombatant = false;
+            var canMove = true;
+
 
             var x1 = player.X;
             var y1 = player.Y;
@@ -176,18 +182,24 @@ namespace AllIsFair.Controllers
 
             if (moveDifference > player.Speed + 0.5)
             {
-                return HttpNotFound();
+                canMove = false;
             }
 
-            whereFrom.Combatant = null;
-            whereTo.Combatant = player;
+            if (whereTo.Combatant != null)
+            {
+                wasCombatant = true;
+            }
+            else
+            {
+                whereFrom.Combatant = null;
+                whereTo.Combatant = player;
 
-            player.X = x2;
-            player.Y = y2;
+                player.X = x2;
+                player.Y = y2;
+                db.SaveChanges();
+            }
 
-            db.SaveChanges();
-
-            var result = new { x1, y1, x2, y2 };
+            var result = new {canMove, wasCombatant, x1, y1, x2, y2};
             return Json(result);
         }
 

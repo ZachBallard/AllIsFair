@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -28,8 +29,8 @@ namespace AllIsFair.Models
         public int Id { get; set; }
         public virtual ICollection<Combatant> Combatants { get; set; } = new List<Combatant>();
         public virtual ICollection<Tile> Tiles { get; set; } = new List<Tile>();
-        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-        public virtual ICollection<Effect> PossibleEffects { get; set; } = new List<Effect>();
+        public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+        public virtual ICollection<Event> Events { get; set; } = new List<Event>();
 
         public virtual  ApplicationUser User { get; set; } //but that makes it a one to one issue?
     }
@@ -38,46 +39,59 @@ namespace AllIsFair.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Points { get; set; } = 0;
-        public int Energy { get; set; } = 10;
         public int X { get; set; }
         public int Y { get; set; }
         public bool IsPlayer { get; set; }
 
         //original main stats without bonus
-        public int StrengthRaw { get; set; }
-        public int SpeedRaw { get; set; }
-        public int SanityRaw { get; set; }
-        public int PerceptionRaw { get; set; }
-        
-        //constant
-        [NotMapped]
-        public int MaxEquip { get; } = 3;
-        [NotMapped]
-        public int MaxHolding { get; } = 2;
-
-        //calculated from cards
         public int Strength { get; set; }
         public int Speed { get; set; }
         public int Sanity { get; set; }
         public int Perception { get; set; }
+        
+        //constant
+        [NotMapped]
+        public int MaxEquip { get; } = 5;
 
         [NotMapped]
-        public int Threat { get; set; } = 0;
-        [NotMapped]
-        public int Survivability { get; set; } = 0;
-        [NotMapped]
-        public int Holding { get; set; } = 0;
-        [NotMapped]
-        public int CurrentEquip { get; set; } = 0;
+        public int Threat
+        {
+            get
+            {
+                var totalThreat = Strength + Perception;
 
-        
-        //Main stats (any reach 0 and you lose)
-        
+                foreach (var item in Items)
+                {
+                    totalThreat = item.ThreatBonus;
+                }
+
+                return totalThreat;
+            }
+        }
+
+        [NotMapped]
+        public int Survivability
+        {
+            get
+            {
+                var totalSurvival = Sanity + Speed;
+
+                foreach (var item in Items)
+                {
+                    totalSurvival = item.SurvivalBonus;
+                }
+
+                return totalSurvival;
+            }
+        }
+
+        [NotMapped]
+        public int CurrentEquip => Items.Count;
+
         [Required]
         public virtual Game Game { get; set; }
-        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-        public virtual ICollection<Effect> Effects { get; set; } = new List<Effect>();
+        public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+
         public virtual Combatant Killer { get; set; }
         public string GraphicName { get; set; }
     }
@@ -86,40 +100,43 @@ namespace AllIsFair.Models
     {
         public int Id { get; set; }
         public string GraphicName { get; set; }
-        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
         public int X { get; set; }
         public int Y { get; set; }
+        public int Type { get; set; }
 
         [Required]
         public virtual Game Game { get; set; }
         public virtual Combatant Combatant { get; set; }
     }
 
-    public class Card
+    public class Item
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string GraphicName { get; set; } //use for finding in folder
         public int Counter { get; set; }
         public bool DoesCount { get; set; }
-        public bool IsOnce { get; set; }
-        public int Type { get; set; }
-
+        public bool IsWeapon { get; set; }
+        public int WeaponRange { get; set; }
+        public int SurvivalBonus { get; set; }
+        public int ThreatBonus { get; set; }
         [Required]
         public virtual Game Game { get; set; }
-        public virtual ICollection<Effect> Effects { get; set; } = new List<Effect>();
     }
 
-    public class Effect
+    public class Event
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Type { get; set; }
+        public string GraphicName { get; set; } //use for finding in folder
+        public int RequiredStat { get; set; } //st sp sa pe th su
+        public int Type { get; set; } //which tile can draw
+        public int StatReward { get; set; }
+        public Item ItemReward { get; set; }
 
-        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-        public virtual ICollection<Game> Games { get; set; } = new List<Game>();
+        [Required]
+        public virtual Game Game { get; set; }
     }
-
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
