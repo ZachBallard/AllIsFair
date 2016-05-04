@@ -160,21 +160,26 @@ namespace AllIsFair.Controllers
             return model;
         }
 
-        public bool TryAttack(int distance, int x1, int y1, int x2, int y2)
+        private bool TryAttack(int distance, int x1, int y1, int x2, int y2)
         {
             var player = CurrentGame.Combatants.FirstOrDefault(p => p.IsPlayer);
             var weapon = player.Items.FirstOrDefault(x => x.IsWeapon);
-            var didAttack = false;
 
-            if (weapon != null && distance < weapon.WeaponRange + 0.5)
+            var didAttack = false;
+            var range = 1.5;
+
+            if (weapon != null)
+            {
+                range = weapon.WeaponRange + 0.5;
+            }
+
+            if (distance < range)
             {
                 didAttack = true;
                 //complicated attack stuff
             }
 
             return didAttack;
-
-
         }
 
         //Post: Game/TryMove
@@ -191,31 +196,33 @@ namespace AllIsFair.Controllers
             var x1 = player.X;
             var y1 = player.Y;
 
-            var distance = CalculateDistance(x1, y1, x2, y2);
-
-            if (whereTo.Combatant != null)
+            if (whereTo != whereFrom)
             {
-                didAttack = TryAttack(distance, x1, y1, x2, y2);
-            }
-            
-            if (distance < player.Speed + 0.5)
-            {
-                didMove = true;
-                whereFrom.Combatant = null;
-                whereTo.Combatant = player;
+                var distance = CalculateDistance(x1, y1, x2, y2);
 
-                player.X = x2;
-                player.Y = y2;
-                db.SaveChanges();
+                if (whereTo.Combatant != null)
+                {
+                    didAttack = TryAttack(distance, x1, y1, x2, y2);
+                }
+                else if (distance < player.Speed + 0.5)
+                {
+                    didMove = true;
+                    whereFrom.Combatant = null;
+                    whereTo.Combatant = player;
+
+                    player.X = x2;
+                    player.Y = y2;
+                    db.SaveChanges();
+                }
             }
 
-            var result = new {didMove, didAttack};
+            var result = new { didMove, didAttack };
             return Json(result);
         }
 
         private int CalculateDistance(int x1, int y1, int x2, int y2)
         {
-            int result = Convert.ToInt32(Math.Sqrt(Math.Pow((x2 - x1), 2) + Math.Pow((y2 - y1), 2)));
+            var result = Convert.ToInt32(Math.Sqrt(Math.Pow((x2 - x1), 2) + Math.Pow((y2 - y1), 2)));
             return result;
         }
 

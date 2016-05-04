@@ -64,7 +64,10 @@
                 data: { x2: x, y2: y },
                 url: '@Url.Action("TryMove", "Games")'
             }).done(function(didMove, didAttack) {
-               console.log(didMove, didAttack);
+                console.log(didMove, didAttack);
+                if (didMove) {
+                    location.reload(true);
+                }
             });
         }
     </script>
