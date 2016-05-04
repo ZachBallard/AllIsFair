@@ -33,10 +33,12 @@ namespace AllIsFair.Models
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
 
         public virtual  ApplicationUser User { get; set; } //but that makes it a one to one issue?
+        public virtual int CombatantTurn { get; set; }
     }
 
     public class Combatant
     {
+        public int TurnNumber { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public int X { get; set; }
@@ -120,6 +122,7 @@ namespace AllIsFair.Models
         public int WeaponRange { get; set; }
         public int SurvivalBonus { get; set; }
         public int ThreatBonus { get; set; }
+        public Combatant Combatant { get; set; }
         [Required]
         public virtual Game Game { get; set; }
     }

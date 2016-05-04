@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -25,6 +26,7 @@ namespace AllIsFair.Controllers
         {
             get
             {
+
                 var currentUserId = User.Identity.GetUserId();
                 var user = db.Users.Include(x => x.Game).FirstOrDefault(x => x.Id == currentUserId);
 
@@ -36,10 +38,12 @@ namespace AllIsFair.Controllers
                 _game = new Game()
                 {
                     Tiles = GenerateMap(12, 12),
-                    Combatants = GenerateCombatants(2),
+
                     User = user
 
                 };
+
+                _game.Combatants = GenerateCombatants(_game, 2);
                 foreach (var tile in _game.Tiles)
                 {
                     foreach (var combatant in _game.Combatants)
@@ -50,18 +54,20 @@ namespace AllIsFair.Controllers
                         }
                     }
                 }
+
                 user.Game = _game;
-                db.SaveChanges();
+
                 return _game;
             }
         }
 
-        private ICollection<Combatant> GenerateCombatants(int num)
+        private ICollection<Combatant> GenerateCombatants(Game game, int num)
         {
             var combatants = new List<Combatant>();
 
             var player = new Combatant()
             {
+                Game = game,
                 Name = "Player",
                 X = 12,
                 Y = 12,
@@ -72,6 +78,11 @@ namespace AllIsFair.Controllers
                 Sanity = 4,
                 Perception = 3
             };
+
+            var knife = new Item() { Combatant = player, GraphicName = "SmallKnife.png", Name = "Knife", IsWeapon = true, WeaponRange = 1, ThreatBonus = 1, Game = game };
+            var emptyCard = new Item() { Combatant = player, GraphicName = "unknowncard.png", Name = "???", Game = game };
+            player.Items.Add(knife);
+            player.Items.Add(emptyCard);
 
             combatants.Add(player);
 
