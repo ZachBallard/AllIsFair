@@ -36,13 +36,31 @@
     <div class="row">
         <div class="bottombar">
             <div class="col-xs-2 col-xs-offset-1">
-                <h4>PLAYER: @Model.Player.Name</h4>
+                <h4>@Model.Player.Name</h4>
                 <h6>Strength: @Model.Player.Strength</h6>
                 <h6>Speed: @Model.Player.Speed</h6>
                 <h6>Sanity: @Model.Player.Sanity</h6>
                 <h6>Perception: @Model.Player.Perception</h6>
                 <h6>Threat: @Model.Player.Threat</h6>
                 <h6>Survivability: @Model.Player.Survivability</h6>
+            </div>
+            <div class="col-xs-1">
+                @foreach (var item in Model.Player.Items)
+                {
+                    if (item.IsWeapon)
+                    {
+                        <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName"/>
+                    }
+                }
+            </div>
+            <div class="col-xs-7">
+                @foreach (var item in Model.Player.Items)
+                {
+                    if (!item.IsWeapon)
+                    {
+                        <img class="img-responsive" style="width: 25%;" src="~/Graphics/@item.GraphicName" />
+                    }
+                }
             </div>
         </div>
     </div>

@@ -212,7 +212,9 @@
     <Content Include="Graphics\Mountain.png" />
     <Content Include="Graphics\Plains.png" />
     <Content Include="Graphics\Player.png" />
+    <Content Include="Graphics\SmallKnife.png" />
     <Content Include="Graphics\Town.png" />
+    <Content Include="Graphics\unknowncard.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
