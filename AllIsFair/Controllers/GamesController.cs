@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Razor.Generator;
@@ -68,7 +69,8 @@ namespace AllIsFair.Controllers
                 GraphicName = "Player.png",
                 Strength = 4,
                 Speed = 2,
-                Sanity = 5
+                Sanity = 4,
+                Perception = 3
             };
 
             combatants.Add(player);
@@ -85,7 +87,8 @@ namespace AllIsFair.Controllers
                     GraphicName = "Enemy.png",
                     Strength = 4,
                     Speed = 2,
-                    Sanity = 5
+                    Sanity = 5,
+                    Perception = 3
                 };
 
                 combatants.Add(enemy);
@@ -156,12 +159,22 @@ namespace AllIsFair.Controllers
 
             return model;
         }
-        //Post: Game/TryAttack
-        [HttpPost]
-        public ActionResult TryAttack(int x2, int y2)
+
+        public bool TryAttack(int distance, int x1, int y1, int x2, int y2)
         {
-            //very similar to move but using weapon range or 1 +.5?
-            return Content("You Can Attack!");
+            var player = CurrentGame.Combatants.FirstOrDefault(p => p.IsPlayer);
+            var weapon = player.Items.FirstOrDefault(x => x.IsWeapon);
+            var didAttack = false;
+
+            if (weapon != null && distance < weapon.WeaponRange + 0.5)
+            {
+                didAttack = true;
+                //complicated attack stuff
+            }
+
+            return didAttack;
+
+
         }
 
         //Post: Game/TryMove
@@ -172,25 +185,22 @@ namespace AllIsFair.Controllers
             var whereFrom = CurrentGame.Tiles.FirstOrDefault(t => t.Combatant == player);
             var whereTo = CurrentGame.Tiles.FirstOrDefault(t => t.X == x2 && t.Y == y2);
 
-            var wasCombatant = false;
-            var canMove = true;
-
+            var didMove = false;
+            var didAttack = false;
 
             var x1 = player.X;
             var y1 = player.Y;
-            var moveDifference = CalculateDistance(x1, y1, x2, y2);
 
-            if (moveDifference > player.Speed + 0.5)
-            {
-                canMove = false;
-            }
+            var distance = CalculateDistance(x1, y1, x2, y2);
 
             if (whereTo.Combatant != null)
             {
-                wasCombatant = true;
+                didAttack = TryAttack(distance, x1, y1, x2, y2);
             }
-            else
+            
+            if (distance < player.Speed + 0.5)
             {
+                didMove = true;
                 whereFrom.Combatant = null;
                 whereTo.Combatant = player;
 
@@ -199,7 +209,7 @@ namespace AllIsFair.Controllers
                 db.SaveChanges();
             }
 
-            var result = new {canMove, wasCombatant, x1, y1, x2, y2};
+            var result = new {didMove, didAttack};
             return Json(result);
         }
 

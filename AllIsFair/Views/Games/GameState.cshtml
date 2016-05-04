@@ -63,20 +63,8 @@
                 type: "POST",
                 data: { x2: x, y2: y },
                 url: '@Url.Action("TryMove", "Games")'
-            }).done(function(canMove, wasCombatant, x1, y1, x2, y2) {
-                if (wasCombatant) {
-                    $.ajax({
-                        type: "POST",
-                        data: { x1, y1, x2, y2 },
-                        url: '@Url.Action("TryAttack", "Games")'
-                    }).done(function(result) {
-                        console.log(result);
-                    });
-                }
-
-                if (canMove) {
-                    location.reload(true);
-                }
+            }).done(function(didMove, didAttack) {
+               console.log(didMove, didAttack);
             });
         }
     </script>
