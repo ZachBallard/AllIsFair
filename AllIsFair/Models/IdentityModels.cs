@@ -60,14 +60,7 @@ namespace AllIsFair.Models
         {
             get
             {
-                var totalThreat = Strength + Perception;
-
-                foreach (var item in Items)
-                {
-                    totalThreat = item.ThreatBonus;
-                }
-
-                return totalThreat;
+                return Strength + Perception + Items.Sum(item => item.ThreatBonus);
             }
         }
 
@@ -76,14 +69,7 @@ namespace AllIsFair.Models
         {
             get
             {
-                var totalSurvival = Sanity + Speed;
-
-                foreach (var item in Items)
-                {
-                    totalSurvival = item.SurvivalBonus;
-                }
-
-                return totalSurvival;
+                return Sanity + Speed + Items.Sum(item => item.SurvivalBonus);
             }
         }
 

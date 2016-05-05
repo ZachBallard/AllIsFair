@@ -210,8 +210,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Graphics\allisfairlogo.png" />
     <Content Include="Graphics\Beach.png" />
+    <Content Include="Graphics\bloodtile.png" />
     <Content Include="Graphics\Enemy.png" />
+    <Content Include="Graphics\fightbutton.png" />
     <Content Include="Graphics\Forest.png" />
     <Content Include="Graphics\Mountain.png" />
     <Content Include="Graphics\Plains.png" />

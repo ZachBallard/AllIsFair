@@ -1,6 +1,31 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-image: url("http://i.imgur.com/WJFzrOG.png");
+    background-position: left top;
+    background-size: cover;
+}
+
+.homelogo {
+    padding: 1% 0%;
+}
+
+.homeinfo {
+    float: left;
+    background-color: black;
+    border: solid 1px darkred;
+    border-radius: 15px;
+    margin: 5px;
+    padding: 20px;
+    height: 25%;
+    width: 50%;
+    color: white;
+    font-family: Comic Sans MS, cursive, sans-serif;
+    text-shadow: 1px 1px darkred;
+}
+
+.homelink:hover {
+    -webkit-filter: brightness(80%);
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -8,38 +33,84 @@
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
-.dl-horizontal dt {
-    white-space: normal;
-}
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+h4 {
+    width: 100%;
+    font-size: 20px;
+    font-family: Comic Sans MS, cursive, sans-serif;
+    color: white;
+    text-shadow: 1px 1px darkred;
+}
+
+h6 {
+    width: 100%;
+    font-size: 15px;
+    color: white;
+    font-family: Comic Sans MS, cursive, sans-serif;
+    text-shadow: 1px 1px darkred;
 }
 
 .topbar {
+    margin-top: 15px;
     height: 10%;
+    text-align: center;
+    border: solid darkred 2px;
+    background-color: black;
 }
+
 .map {
     height: 60%;
+    background-image: url("http://img15.deviantart.net/e173/i/2011/250/4/c/old_paper_stock_03_by_ftourini-d495tan.png");
+    padding: 70px 60px;
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
-.tile {
 
+.tile {
 }
+
 .card {
-    border: solid 1px black;
+    border: solid 1px darkred;
     text-align: center;
-    padding: 5px;
-    margin-top: 5px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    height: 320px;
+    width: 150px;
+    background-image: url("http://i.imgur.com/8V0lL.jpg");
+    float: left;
 }
-.black {
-    border: solid black 1px;
+
+.cardtext {
+    border: solid 1px darkred;
+    background-color: black;
+    margin: 5px;
 }
-.red {
+
+.tileborder {
+    border: solid lightsalmon 1px;
+}
+
+.tilebordermove {
     border: solid red 3px;
 }
+
+    .tilebordermove:hover {
+        border: solid darkred 3px;
+    }
+
 .bottombar {
     height: 30%;
+    width: 100%;
+    margin-top: -40px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: initial;
+    padding: 5px;
+    text-align: center;
+    left: 0;
+    border: solid darkred 2px;
+    background-color: black;
+    border-radius: 5px;
 }
