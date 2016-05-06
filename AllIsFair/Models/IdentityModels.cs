@@ -50,6 +50,7 @@ namespace AllIsFair.Models
         public int Speed { get; set; }
         public int Sanity { get; set; }
         public int Perception { get; set; }
+        public int Health { get; set; } = 10;
         
         //constant
         [NotMapped]
@@ -119,9 +120,11 @@ namespace AllIsFair.Models
         public string Name { get; set; }
         public string GraphicName { get; set; } //use for finding in folder
         public int RequiredStat { get; set; } //st sp sa pe th su
+        public int TargetNumber { get; set; }
         public int Type { get; set; } //which tile can draw
         public int StatReward { get; set; }
         public Item ItemReward { get; set; }
+        public string Description { get; set; }
 
         [Required]
         public virtual Game Game { get; set; }

@@ -223,10 +223,10 @@ namespace AllIsFair.Controllers
 
                     player.X = x2;
                     player.Y = y2;
+
                     db.SaveChanges();
                 }
             }
-
             var result = new { didMove, didAttack };
             return Json(result);
         }
@@ -237,6 +237,80 @@ namespace AllIsFair.Controllers
             return result;
         }
 
+        //GET: Game/Event
+        public ActionResult Event(int type)
+        {
+            var player = CurrentGame.Combatants.FirstOrDefault(x => x.IsPlayer);
+            var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
+            CurrentGame.Events.Remove(eventCard);
+            CurrentGame.Events.Add(eventCard);
+            var usedStat = 0;
+            switch (eventCard.RequiredStat)
+            {
+                case 1:
+                    usedStat = player.Strength;
+                    break;
+                case 2:
+                    usedStat = player.Speed;
+                    break;
+                case 3:
+                    usedStat = player.Sanity;
+                    break;
+                case 4:
+                    usedStat = player.Perception;
+                    break;
+            }
+
+            var dieResult = RollDie(usedStat);
+            var isFail = false;
+
+            if (dieResult.Count > eventCard.TargetNumber)
+            {
+                if (eventCard.StatReward != null)
+                {
+                    switch (eventCard.RequiredStat)
+                    {
+                        case 1:
+                            player.Strength += eventCard.StatReward;
+                            break;
+                        case 2:
+                            player.Speed += eventCard.StatReward;
+                            break;
+                        case 3:
+                            player.Sanity += eventCard.StatReward;
+                            break;
+                        case 4:
+                            player.Perception += eventCard.StatReward;
+                            break;
+                    }
+                }
+                if (eventCard.ItemReward != null)
+                {
+                    var itemReward = CurrentGame.Items.FirstOrDefault(x => x == eventCard.ItemReward);
+                    if (player.CurrentEquip < player.MaxEquip && !itemReward.IsWeapon)
+                    {
+                        player.Items.Add(itemReward);
+                    }
+                }
+            }
+            else
+            {
+                isFail = true;
+                return Json(isFail, );
+            }
+            var eventResult = 
+        }
+
+        public List<int> RollDie(int number)
+        {
+            var allRolls = new List<int>();
+            Random random = new Random();
+            for (int i = 1; i <= number; i++)
+            {
+                allRolls.Add(random.Next(1, 6));
+            }
+            return allRolls;
+        } 
         // GET: Game/Delete
         public ActionResult Delete()
         {

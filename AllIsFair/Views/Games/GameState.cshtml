@@ -37,23 +37,21 @@
                 <div class="col-xs-3 col-xs-offset-1">
                     <h4>@Model.Player.Name</h4>
                     <br/>
+                    <h4>Health: @Model.Player.Health</h4>
                     <h4>Strength: @Model.Player.Strength</h4>
-                    <br />
                     <h4>Speed: @Model.Player.Speed</h4>
-                    <br />
                     <h4>Sanity: @Model.Player.Sanity</h4>
-                    <br />
                     <h4>Perception: @Model.Player.Perception</h4>
-                    <br />
+                    <br/>
                     <h4>Threat: @Model.Player.Threat</h4>
-                    <br />
+                    <br/>
                     <h4>Survivability: @Model.Player.Survivability</h4>
                 </div>
                 @foreach (var item in Model.Player.Items)
-            {
-
-                if (!Model.Player.Items.Any(x => x.IsWeapon))
                 {
+
+                    if (!Model.Player.Items.Any(x => x.IsWeapon))
+                    {
                         <div class="card">
                             <h4>No Weapon</h4>
                         </div>
@@ -65,7 +63,7 @@
                             <div class="cardtext">
                                 <h4> @item.Name </h4>
                             </div>
-                            <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
+                            <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName"/>
                             <div class="cardtext">
                                 <h6>Range: @item.WeaponRange</h6>
                                 <h6>Threat: +@item.ThreatBonus</h6>
@@ -81,7 +79,7 @@
                         <div class="cardtext">
                             <h4>@item.Name</h4>
                         </div>
-                        <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
+                        <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName"/>
                         <div class="cardtext">
                             <h6>Counters: @item.Counter</h6>
                             <h6>Threat: +@item.ThreatBonus</h6>
@@ -99,28 +97,43 @@
             </div>
         </div>
     </div>
+    <div class="pop">
+        
+    </div>
 </div>
 
 @section scripts{
     <script>
 
-        $(".tile").click(function () {
+        $(".tile").click(function() {
             TryMove($(this));
         });
 
         function TryMove(item) {
             var x = item.data('x');
             var y = item.data('y');
+            var type = item.data('type');
             console.log(x, y);
             $.ajax({
                 type: "POST",
                 data: { x2: x, y2: y },
                 url: '@Url.Action("TryMove", "Games")'
-            }).done(function (didMove, didAttack) {
+            }).done(function(didMove, didAttack) {
                 console.log(didMove, didAttack);
                 if (didMove) {
                     location.reload(true);
+                    DrawCard(type);
                 }
+            });
+        }
+
+        function DrawCard(type) {
+            $.ajax({
+                type: "GET",
+                data: { type: type },
+                url: '@Url.Action("DrawEvent", "Games")'
+            }).done(function() {
+
             });
         }
     </script>
