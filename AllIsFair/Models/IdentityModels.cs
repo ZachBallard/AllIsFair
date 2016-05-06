@@ -80,7 +80,8 @@ namespace AllIsFair.Models
         [Required]
         public virtual Game Game { get; set; }
         public virtual ICollection<Item> Items { get; set; } = new List<Item>();
-
+        [NotMapped]
+        public virtual Event Event { get; set; }
         public virtual Combatant Killer { get; set; }
         public string GraphicName { get; set; }
     }

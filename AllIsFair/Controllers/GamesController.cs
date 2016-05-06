@@ -165,7 +165,7 @@ namespace AllIsFair.Controllers
                 Combatants = CurrentGame.Combatants.ToList(),
                 Tiles = CurrentGame.Tiles.ToList(),
                 Player = player,
-                PossibleMoves = possibleMoves
+                PossibleMoves = possibleMoves,
             };
 
             return model;
@@ -189,6 +189,11 @@ namespace AllIsFair.Controllers
                 didAttack = true;
                 //complicated attack stuff
             }
+
+            var result = new Results()
+            {
+                didAttack = true
+            };
 
             return didAttack;
         }
@@ -237,8 +242,9 @@ namespace AllIsFair.Controllers
             return result;
         }
 
-        //GET: Game/Event
-        public ActionResult Event(int type)
+        //GET: Game/DrawEvent
+        [HttpPost]
+        public RedirectResult DrawEvent(int type)
         {
             var player = CurrentGame.Combatants.FirstOrDefault(x => x.IsPlayer);
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
@@ -262,7 +268,6 @@ namespace AllIsFair.Controllers
             }
 
             var dieResult = RollDie(usedStat);
-            var isFail = false;
 
             if (dieResult.Count > eventCard.TargetNumber)
             {
@@ -291,14 +296,15 @@ namespace AllIsFair.Controllers
                     {
                         player.Items.Add(itemReward);
                     }
+                    else if (!player.Items.Any(x => x.IsWeapon))
+                    {
+                        player.Items.Add(itemReward);
+                    }
                 }
             }
-            else
-            {
-                isFail = true;
-                return Json(isFail, );
-            }
-            var eventResult = 
+
+            db.SaveChanges();
+            //call gamestate send result
         }
 
         public List<int> RollDie(int number)
@@ -309,6 +315,7 @@ namespace AllIsFair.Controllers
             {
                 allRolls.Add(random.Next(1, 6));
             }
+
             return allRolls;
         } 
         // GET: Game/Delete

@@ -121,7 +121,6 @@
             }).done(function(didMove, didAttack) {
                 console.log(didMove, didAttack);
                 if (didMove) {
-                    location.reload(true);
                     DrawCard(type);
                 }
             });
@@ -129,11 +128,9 @@
 
         function DrawCard(type) {
             $.ajax({
-                type: "GET",
+                type: "POST",
                 data: { type: type },
                 url: '@Url.Action("DrawEvent", "Games")'
-            }).done(function() {
-
             });
         }
     </script>

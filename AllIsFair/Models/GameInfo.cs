@@ -16,6 +16,10 @@ namespace AllIsFair.Models
         public int AliveCombatants { get; set; }
         public Combatant Player { get; set; }
 
+        public List<int> DieResult { get; set; }
+        public bool AskWeapon { get; set; }
+        public bool ShowResult { get; set; }
+         
         public List<Tile> PossibleMoves { get; set; }
     }
 }
