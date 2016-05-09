@@ -168,51 +168,18 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Migrations\201605092341137_InitialCreation.cs" />
+    <Compile Include="Migrations\201605092341137_InitialCreation.Designer.cs">
+      <DependentUpon>201605092341137_InitialCreation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GameAction.cs" />
+    <Compile Include="Models\GameHelpers.cs" />
+    <Compile Include="Models\GameManager.cs" />
     <Compile Include="Controllers\GamesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605032211583_InitialCreate.cs" />
-    <Compile Include="Migrations\201605032211583_InitialCreate.Designer.cs">
-      <DependentUpon>201605032211583_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605041747486_simplifiedMechanics.cs" />
-    <Compile Include="Migrations\201605041747486_simplifiedMechanics.Designer.cs">
-      <DependentUpon>201605041747486_simplifiedMechanics.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605041752313_removedTwoInTile.cs" />
-    <Compile Include="Migrations\201605041752313_removedTwoInTile.Designer.cs">
-      <DependentUpon>201605041752313_removedTwoInTile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605041754351_tileType.cs" />
-    <Compile Include="Migrations\201605041754351_tileType.Designer.cs">
-      <DependentUpon>201605041754351_tileType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605042121033_fixcard.cs" />
-    <Compile Include="Migrations\201605042121033_fixcard.Designer.cs">
-      <DependentUpon>201605042121033_fixcard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605061716254_descriptionHealth.cs" />
-    <Compile Include="Migrations\201605061716254_descriptionHealth.Designer.cs">
-      <DependentUpon>201605061716254_descriptionHealth.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605061809471_targetEvent.cs" />
-    <Compile Include="Migrations\201605061809471_targetEvent.Designer.cs">
-      <DependentUpon>201605061809471_targetEvent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605061813488_playerDieResult.cs" />
-    <Compile Include="Migrations\201605061813488_playerDieResult.Designer.cs">
-      <DependentUpon>201605061813488_playerDieResult.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605061817484_fixmapping.cs" />
-    <Compile Include="Migrations\201605061817484_fixmapping.Designer.cs">
-      <DependentUpon>201605061817484_fixmapping.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201605091854139_gamestatetogame.cs" />
-    <Compile Include="Migrations\201605091854139_gamestatetogame.Designer.cs">
-      <DependentUpon>201605091854139_gamestatetogame.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -296,6 +263,7 @@
     <Content Include="Views\Game\Edit.cshtml" />
     <Content Include="Views\Game\Index.cshtml" />
     <Content Include="Views\Games\GameState.cshtml" />
+    <Content Include="Views\Games\PlayerStat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -309,35 +277,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201605032211583_InitialCreate.resx">
-      <DependentUpon>201605032211583_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605041747486_simplifiedMechanics.resx">
-      <DependentUpon>201605041747486_simplifiedMechanics.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605041752313_removedTwoInTile.resx">
-      <DependentUpon>201605041752313_removedTwoInTile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605041754351_tileType.resx">
-      <DependentUpon>201605041754351_tileType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605042121033_fixcard.resx">
-      <DependentUpon>201605042121033_fixcard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605061716254_descriptionHealth.resx">
-      <DependentUpon>201605061716254_descriptionHealth.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605061809471_targetEvent.resx">
-      <DependentUpon>201605061809471_targetEvent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605061813488_playerDieResult.resx">
-      <DependentUpon>201605061813488_playerDieResult.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605061817484_fixmapping.resx">
-      <DependentUpon>201605061817484_fixmapping.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605091854139_gamestatetogame.resx">
-      <DependentUpon>201605091854139_gamestatetogame.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201605092341137_InitialCreation.resx">
+      <DependentUpon>201605092341137_InitialCreation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

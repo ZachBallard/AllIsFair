@@ -7,13 +7,13 @@ namespace AllIsFair.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class fixmapping : IMigrationMetadata
+    public sealed partial class InitialCreation : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(fixmapping));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreation));
         
         string IMigrationMetadata.Id
         {
-            get { return "201605061817484_fixmapping"; }
+            get { return "201605092341137_InitialCreation"; }
         }
         
         string IMigrationMetadata.Source

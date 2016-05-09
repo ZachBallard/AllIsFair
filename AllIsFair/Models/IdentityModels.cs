@@ -22,43 +22,42 @@ namespace AllIsFair.Models
             return userIdentity;
         }
 
-        public virtual Game Game { get; set; } 
+        public virtual Game Game { get; set; }
     }
 
     public class Game
     {
         public int Id { get; set; }
+        public virtual ICollection<GameAction> GameActions { get; set; } = new List<GameAction>();
         public virtual ICollection<Combatant> Combatants { get; set; } = new List<Combatant>();
         public virtual ICollection<Tile> Tiles { get; set; } = new List<Tile>();
         public virtual ICollection<Item> Items { get; set; } = new List<Item>();
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
 
-        public virtual  ApplicationUser User { get; set; } //but that makes it a one to one issue?
-        public virtual int CombatantTurn { get; set; }
+        public virtual ApplicationUser User { get; set; } //but that makes it a one to one issue?
+        public int CombatantTurn { get; set; }
 
-        public int AliveCombatants => Combatants.Count(x => x.Killer == null);
-
-        public Combatant Player => Combatants.FirstOrDefault(x => x.IsPlayer);
-
-        public bool PlayerDone { get; set; }
-        public bool AskWeapon { get; set; }
-        public bool AskItem { get; set; }
-        public bool ShowResult { get; set; }
-        public bool IsAttack { get; set; }
-
-        public List<int> DieResult { get; set; }
-        public List<int> DieResultEnemy { get; set; } 
         public Event Event { get; set; }
-        public List<Tile> PossibleMoves { get; set; }
     }
 
     public class Combatant
     {
+
+        public Combatant()
+        {
+
+        }
+        public Combatant(string name, bool isPlayer)
+        {
+            this.Name = name;
+            this.IsPlayer = isPlayer;
+            GraphicName = this.IsPlayer ? "Player.png" : "Enemy.png";
+        }
+
         public int TurnNumber { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public Tile Tile { get; set; }
         public bool IsPlayer { get; set; }
 
         //original main stats without bonus
@@ -67,7 +66,7 @@ namespace AllIsFair.Models
         public int Sanity { get; set; }
         public int Perception { get; set; }
         public int Health { get; set; } = 10;
-        
+
         //constant
         [NotMapped]
         public int MaxEquip { get; } = 5;
@@ -100,6 +99,8 @@ namespace AllIsFair.Models
         public virtual Event Event { get; set; }
         public virtual Combatant Killer { get; set; }
         public string GraphicName { get; set; }
+
+        public virtual ICollection<GameAction> GameActions { get; set; } = new List<GameAction>();
     }
 
     public class Tile
@@ -127,18 +128,26 @@ namespace AllIsFair.Models
         public int SurvivalBonus { get; set; }
         public int ThreatBonus { get; set; }
         public Combatant Combatant { get; set; }
-        [Required]
-        public virtual Game Game { get; set; }
+
     }
 
+    public enum Stat
+    {
+        Strength,
+        Speed,
+        Sanity,
+        Perception,
+        Threat,
+        Survivability
+    }
     public class Event
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string GraphicName { get; set; } //use for finding in folder
-        public int RequiredStat { get; set; } //st sp sa pe th su
+        public Stat RequiredStat { get; set; } //st sp sa pe th su
         public int TargetNumber { get; set; }
-        public int Type { get; set; } //which tile can draw
+        public EventType Type { get; set; } //which tile can draw
         public int StatReward { get; set; }
         public Item ItemReward { get; set; }
         public string Description { get; set; }
@@ -163,6 +172,7 @@ namespace AllIsFair.Models
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<ApplicationUser>().HasOptional(u => u.Game).WithRequired(g => g.User);
+            modelBuilder.Entity<Combatant>().HasOptional(u => u.Tile).WithOptionalDependent(g => g.Combatant);
         }
 
         public DbSet<Game> Games { get; set; }

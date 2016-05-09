@@ -1,4 +1,4 @@
-﻿@model AllIsFair.Models.Game
+﻿@model AllIsFair.Models.GameVM
 
 @{
     ViewBag.Title = "GameState";
@@ -10,111 +10,86 @@
 
     <div class="row">
         <div class="topbar container">
-            <h4>Alive: @Model.AliveCombatants</h4>
-            <h4>Dead: @(Model.Combatants.Count - Model.AliveCombatants)</h4>
+            <h4>Alive: @Model.NumOfAlive</h4>
+            <h4>Dead: @(Model.NumOfDead)</h4>
         </div>
     </div>
 
-    @if (Model.ShowResult)
-    {
-
-    }
-    else if (Model.AskWeapon)
-    {
-
-    }
-    else if (Model.AskItem)
-    {
-
-    }
-    else
-    {
-        <div class="row map">
-            @foreach (var tile in Model.Tiles)
+    <div class="row map">
+        @foreach (var tile in Model.Tiles.OrderBy(t=>t.X).ThenBy(t=>t.Y))
             {
-                var color = "tileborder";
-                if (Model.PossibleMoves.FirstOrDefault(t => t.Id == tile.Id) != null)
+                var color = !tile.IsPossibleMove ? "tileborder" : "tilebordermove";
+
+            <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
+                <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
+
+                @if (tile.HasCombatant)
                 {
-                    color = "tilebordermove";
+                    <img class="img-responsive" style="width: 100%; z-index: 2; position: absolute; top: 0; left: 0;" src="~/Graphics/@tile.CombatantGraphicName" data-x="@tile.X" data-y="@tile.Y" />
                 }
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-xs-offset-1">
+            <div class="row bottombar stretchrow">
+                <div class="col-xs-3 col-xs-offset-1">
 
-                <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
-                    <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
-
-                    @if (tile.Combatant != null)
-                    {
-                        <img class="img-responsive" style="width: 100%; z-index: 2; position: absolute; top: 0; left: 0;" src="~/Graphics/@tile.Combatant.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
-                    }
+                    @Html.Partial("PlayerStat", Model.Player)
+                    
                 </div>
-            }
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-xs-offset-1">
-                <div class="row bottombar stretchrow">
-                    <div class="col-xs-3 col-xs-offset-1">
-                        <h4>@Model.Player.Name</h4>
-                        <br />
-                        <h4>Health: @Model.Player.Health</h4>
-                        <h4>Strength: @Model.Player.Strength</h4>
-                        <h4>Speed: @Model.Player.Speed</h4>
-                        <h4>Sanity: @Model.Player.Sanity</h4>
-                        <h4>Perception: @Model.Player.Perception</h4>
-                        <br />
-                        <h4>Threat: @Model.Player.Threat</h4>
-                        <br />
-                        <h4>Survivability: @Model.Player.Survivability</h4>
-                    </div>
-                    @foreach (var item in Model.Player.Items)
-                {
-
-                    if (!Model.Player.Items.Any(x => x.IsWeapon))
+                
+                @*    @foreach (var item in Model.Player.Items)
                     {
-                            <div class="card">
-                                <h4>No Weapon</h4>
-                            </div>
-                        }
 
-                        if (item.IsWeapon)
+                        if (!Model.Player.Items.Any(x => x.IsWeapon))
                         {
+                                <div class="card">
+                                    <h4>No Weapon</h4>
+                                </div>
+                            }
+
+                            if (item.IsWeapon)
+                            {
+                                <div class="card">
+                                    <div class="cardtext">
+                                        <h4> @item.Name </h4>
+                                    </div>
+                                    <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
+                                    <div class="cardtext">
+                                        <h6>Range: @item.WeaponRange</h6>
+                                        <h6>Threat: +@item.ThreatBonus</h6>
+                                        <h6>Survival: +@item.SurvivalBonus</h6>
+                                    </div>
+                                </div>
+                            }
+
+                        }
+                        @foreach (var item in Model.Player.Items.Where(item => !item.IsWeapon))
+                    {
                             <div class="card">
                                 <div class="cardtext">
-                                    <h4> @item.Name </h4>
+                                    <h4>@item.Name</h4>
                                 </div>
                                 <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
                                 <div class="cardtext">
-                                    <h6>Range: @item.WeaponRange</h6>
+                                    <h6>Counters: @item.Counter</h6>
                                     <h6>Threat: +@item.ThreatBonus</h6>
                                     <h6>Survival: +@item.SurvivalBonus</h6>
                                 </div>
                             </div>
                         }
-
-                    }
-                    @foreach (var item in Model.Player.Items.Where(item => !item.IsWeapon))
-                {
-                        <div class="card">
-                            <div class="cardtext">
-                                <h4>@item.Name</h4>
+                        @{ var cardsLeft = Model.Player.Items.Count(x => !x.IsWeapon); }
+                        @for (int i = cardsLeft; i < 4; i++)
+                    {
+                            <div class="card">
+                                <h4>No Item</h4>
                             </div>
-                            <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
-                            <div class="cardtext">
-                                <h6>Counters: @item.Counter</h6>
-                                <h6>Threat: +@item.ThreatBonus</h6>
-                                <h6>Survival: +@item.SurvivalBonus</h6>
-                            </div>
-                        </div>
-                    }
-                    @{ var cardsLeft = Model.Player.Items.Count(x => !x.IsWeapon); }
-                    @for (int i = cardsLeft; i < 4; i++)
-                {
-                        <div class="card">
-                            <h4>No Item</h4>
-                        </div>
-                    }
-                </div>
+                        }*@
             </div>
         </div>
-                        }
+    </div>
+
 </div>
 
 

@@ -1,10 +1,42 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace AllIsFair.Models
 {
+    public class GameVM
+    {
+        public int NumOfAlive { get; set; }
+        public int NumOfDead { get; set; }
+        public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
+        public PlayerVM Player  { get; set; } = new PlayerVM();
+    }
+
+    public class PlayerVM
+    {
+        public string Name { get; set; }
+        public string Health { get; set; }
+        public string Strength { get; set; }
+        public string Speed { get; set; }
+        public string Sanity { get; set; }
+        public string Perception { get; set; }
+        public string Threat { get; set; }
+        public string Survivability { get; set; }
+    }
+
+    public class TileVM
+    {
+        public bool IsPossibleMove { get; set; }
+        public bool HasCombatant { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public EventType Type { get; set; }
+        public string GraphicName { get; set; }
+        public string CombatantGraphicName { get; set; }
+    }
+
     public class GameInfo
     {
         public int Id { get; set; }
