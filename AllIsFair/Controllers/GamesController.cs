@@ -133,10 +133,19 @@ namespace AllIsFair.Controllers
         // GET: Game
         public ActionResult GameState()
         {
-            return View(GetGame());
+            //if (CurrentGame.PlayerDone)
+            {
+                //check turn
+                //if enemy do enemy stuff
+                    //if attack check if dead
+                //when player
+            //    GetGame();
+            }
+
+            return View(CurrentGame);
         }
 
-        private GameInfo GetGame()
+        private void GetGame()
         {
             //determine viable moves for player
             var possibleMoves = new List<Tile>();
@@ -157,18 +166,11 @@ namespace AllIsFair.Controllers
                     possibleMoves.Add(tile);
                 }
             }
-
-            var model = new GameInfo
+            //finish view model 
+            var CurrentGameInfo = new GameInfo()
             {
-                Id = CurrentGame.Id,
-                AliveCombatants = CurrentGame.Combatants.Count(x => x.Killer == null),
-                Combatants = CurrentGame.Combatants.ToList(),
-                Tiles = CurrentGame.Tiles.ToList(),
-                Player = player,
-                PossibleMoves = possibleMoves,
+                Id = CurrentGame.Id
             };
-
-            return model;
         }
 
         private bool TryAttack(int distance, int x1, int y1, int x2, int y2)
@@ -190,11 +192,6 @@ namespace AllIsFair.Controllers
                 //complicated attack stuff
             }
 
-            var result = new Results()
-            {
-                didAttack = true
-            };
-
             return didAttack;
         }
 
@@ -206,7 +203,6 @@ namespace AllIsFair.Controllers
             var whereFrom = CurrentGame.Tiles.FirstOrDefault(t => t.Combatant == player);
             var whereTo = CurrentGame.Tiles.FirstOrDefault(t => t.X == x2 && t.Y == y2);
 
-            var didMove = false;
             var didAttack = false;
 
             var x1 = player.X;
@@ -222,7 +218,6 @@ namespace AllIsFair.Controllers
                 }
                 else if (distance < player.Speed + 0.5)
                 {
-                    didMove = true;
                     whereFrom.Combatant = null;
                     whereTo.Combatant = player;
 
@@ -232,7 +227,15 @@ namespace AllIsFair.Controllers
                     db.SaveChanges();
                 }
             }
-            var result = new { didMove, didAttack };
+
+            CurrentGame.PlayerDone = false;
+
+            if (didAttack)
+            {
+                CurrentGame.ShowResult = true;
+            }
+
+            var result = new {didAttack};
             return Json(result);
         }
 
@@ -244,7 +247,7 @@ namespace AllIsFair.Controllers
 
         //GET: Game/DrawEvent
         [HttpPost]
-        public RedirectResult DrawEvent(int type)
+        public ActionResult DrawEvent(int type)
         {
             var player = CurrentGame.Combatants.FirstOrDefault(x => x.IsPlayer);
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
@@ -271,7 +274,7 @@ namespace AllIsFair.Controllers
 
             if (dieResult.Count > eventCard.TargetNumber)
             {
-                if (eventCard.StatReward != null)
+                if (eventCard.StatReward >0)
                 {
                     switch (eventCard.RequiredStat)
                     {
@@ -289,22 +292,41 @@ namespace AllIsFair.Controllers
                             break;
                     }
                 }
+
                 if (eventCard.ItemReward != null)
                 {
                     var itemReward = CurrentGame.Items.FirstOrDefault(x => x == eventCard.ItemReward);
-                    if (player.CurrentEquip < player.MaxEquip && !itemReward.IsWeapon)
+
+                    if (itemReward.IsWeapon && player.Items.Any(x => x.IsWeapon))
                     {
-                        player.Items.Add(itemReward);
+                        if (player.Items.Any(x => x.IsWeapon))
+                        {
+                            CurrentGame.AskWeapon = true;
+                        }
+                        else
+                        {
+                            player.Items.Add(itemReward);
+                        }
                     }
-                    else if (!player.Items.Any(x => x.IsWeapon))
+                    else
                     {
-                        player.Items.Add(itemReward);
+                        if (player.CurrentEquip < player.MaxEquip)
+                        {
+                            player.Items.Add(itemReward);
+                        }
+                        else
+                        {
+                            CurrentGame.AskItem = true;
+                        }
+                        
                     }
                 }
             }
 
             db.SaveChanges();
-            //call gamestate send result
+
+            CurrentGame.ShowResult = true;
+            return Content("Done!");
         }
 
         public List<int> RollDie(int number)
@@ -313,11 +335,11 @@ namespace AllIsFair.Controllers
             Random random = new Random();
             for (int i = 1; i <= number; i++)
             {
-                allRolls.Add(random.Next(1, 6));
+                allRolls.Add(random.Next(1, 7));
             }
 
             return allRolls;
-        } 
+        }
         // GET: Game/Delete
         public ActionResult Delete()
         {

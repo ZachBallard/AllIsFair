@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -34,6 +35,21 @@ namespace AllIsFair.Models
 
         public virtual  ApplicationUser User { get; set; } //but that makes it a one to one issue?
         public virtual int CombatantTurn { get; set; }
+
+        public int AliveCombatants => Combatants.Count(x => x.Killer == null);
+
+        public Combatant Player => Combatants.FirstOrDefault(x => x.IsPlayer);
+
+        public bool PlayerDone { get; set; }
+        public bool AskWeapon { get; set; }
+        public bool AskItem { get; set; }
+        public bool ShowResult { get; set; }
+        public bool IsAttack { get; set; }
+
+        public List<int> DieResult { get; set; }
+        public List<int> DieResultEnemy { get; set; } 
+        public Event Event { get; set; }
+        public List<Tile> PossibleMoves { get; set; }
     }
 
     public class Combatant

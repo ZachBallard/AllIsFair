@@ -210,12 +210,15 @@
     <Compile Include="Migrations\201605061817484_fixmapping.Designer.cs">
       <DependentUpon>201605061817484_fixmapping.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605091854139_gamestatetogame.cs" />
+    <Compile Include="Migrations\201605091854139_gamestatetogame.Designer.cs">
+      <DependentUpon>201605091854139_gamestatetogame.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\GameInfo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Results.cs" />
     <Compile Include="Models\TurnManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -332,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605061817484_fixmapping.resx">
       <DependentUpon>201605061817484_fixmapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605091854139_gamestatetogame.resx">
+      <DependentUpon>201605091854139_gamestatetogame.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
