@@ -11,12 +11,16 @@ namespace AllIsFair.Models
         public int NumOfAlive { get; set; }
         public int NumOfDead { get; set; }
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
-        public PlayerVM Player  { get; set; } = new PlayerVM();
+        public PlayerVM Player { get; set; } = new PlayerVM();
+        public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
+        public List<Tile> PossibleMoves { get; set; } = new List<Tile>();
+        public List<GameAction> GameActions { get; set; } = new List<GameAction>();
     }
 
     public class PlayerVM
     {
         public string Name { get; set; }
+        public string GraphicName { get; set; }
         public string Health { get; set; }
         public string Strength { get; set; }
         public string Speed { get; set; }
@@ -24,15 +28,16 @@ namespace AllIsFair.Models
         public string Perception { get; set; }
         public string Threat { get; set; }
         public string Survivability { get; set; }
+        public List<Item> Items { get; set; } = new List<Item>();
     }
 
     public class TileVM
     {
-        public bool IsPossibleMove { get; set; }
-        public bool HasCombatant { get; set; }
+        public int Id { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public EventType Type { get; set; }
+        public Combatant Combatant { get; set; }
         public string GraphicName { get; set; }
         public string CombatantGraphicName { get; set; }
     }
@@ -49,15 +54,5 @@ namespace AllIsFair.Models
 
         public Combatant Player => Combatants.FirstOrDefault(x => x.IsPlayer);
 
-        public bool PlayerDone { get; set; }
-        public bool AskWeapon { get; set; }
-        public bool AskItem { get; set; }
-        public bool ShowResult { get; set; }
-        public bool IsAttack { get; set; }
-
-        public List<int> DieResult { get; set; }
-        public List<int> DieResultEnemy { get; set; }
-        public Event Event { get; set; }
-        public List<Tile> PossibleMoves { get; set; }
     }
 }

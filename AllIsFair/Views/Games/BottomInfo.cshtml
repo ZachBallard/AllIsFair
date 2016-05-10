@@ -1,0 +1,63 @@
+﻿@model AllIsFair.Models.PlayerVM
+
+<div class="col-xs-3 col-xs-offset-1">
+    <h4>@Model.Name</h4>
+    <br/>
+    <h4>Health: @Model.Health</h4>
+    <h4>Strength: @Model.Strength</h4>
+    <h4>Speed: @Model.Speed</h4>
+    <h4>Sanity: @Model.Sanity</h4>
+    <h4>Perception: @Model.Perception</h4>
+    <br/>
+    <h4>Threat: @Model.Threat</h4>
+    <br/>
+    <h4>Survivability: @Model.Survivability</h4>
+</div>
+
+@foreach (var item in Model.Items)
+{
+
+    if (!Model.Items.Any(x => x.IsWeapon))
+    {
+        <div class="card">
+            <h4>No Weapon</h4>
+        </div>
+    }
+
+    if (item.IsWeapon)
+    {
+        <div class="card">
+            <div class="cardtext">
+                <h4> @item.Name </h4>
+            </div>
+            <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
+            <div class="cardtext">
+                <h6>Range: @item.WeaponRange</h6>
+                <h6>Threat: +@item.ThreatBonus</h6>
+                <h6>Survival: +@item.SurvivalBonus</h6>
+            </div>
+        </div>
+    }
+
+}
+@foreach (var item in Model.Items.Where(item => !item.IsWeapon))
+{
+    <div class="card">
+        <div class="cardtext">
+            <h4>@item.Name</h4>
+        </div>
+        <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
+        <div class="cardtext">
+            <h6>Counters: @item.Counter</h6>
+            <h6>Threat: +@item.ThreatBonus</h6>
+            <h6>Survival: +@item.SurvivalBonus</h6>
+        </div>
+    </div>
+}
+@{ var cardsLeft = Model.Items.Count(x => !x.IsWeapon); }
+@for (int i = cardsLeft; i < 4; i++)
+{
+    <div class="card">
+        <h4>No Item</h4>
+    </div>
+}

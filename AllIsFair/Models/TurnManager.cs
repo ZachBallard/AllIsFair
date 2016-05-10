@@ -11,8 +11,13 @@ namespace AllIsFair.Models
 
         public List<Combatant> TurnOrder { get; set; }
 
-        public Combatant CurrentTurn { get; set; }
-        public bool HasMoved { get; set; }
-        public bool HasActed { get; set; }
+        public Combatant CurrentTurn => TurnOrder.First();
+
+        public bool isMoving { get; set; }
+        public bool isAttacking { get; set; }
+
+        public List<int> DieResult { get; set; } = new List<int>();
+        public List<int> DieResultEnemy { get; set; } = new List<int>();
+        public Event Event { get; set; }
     }
 }

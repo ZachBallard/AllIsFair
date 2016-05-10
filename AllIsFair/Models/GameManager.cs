@@ -47,17 +47,9 @@ namespace AllIsFair.Models
             game.Combatants.First(x => !x.IsPlayer).Tile = enemyStartingTile;
 
             _db.Games.Add(game);
-            try
-            {
 
-           
             _db.SaveChanges();
-            }
-            catch (DbEntityValidationException ex)
-            {
 
-                throw;
-            }
             return game;
         }
 
@@ -150,9 +142,12 @@ namespace AllIsFair.Models
             {
                 if (to.Combatant != null && to.Combatant != attacker)
                 {
-                    //Gotta Attack.
-                    //TODO Finish attack here
-                    RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {newX},{newY}.");
+                    //attack logic
+                    var didAttack = TryAttack(attacker, attacker.Tile, to);
+                    if (didAttack)
+                    {
+                        RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {newX},{newY}.");
+                    }
                 }
                 else
                 {
@@ -167,28 +162,35 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-        //private bool TryAttack(Tile @from, Tile @to)
-        //{
-        //    var distance = @from.Distance(to);
-        //    var player = CurrentGame.Combatants.FirstOrDefault(p => p.IsPlayer);
-        //    var weapon = player.Items.FirstOrDefault(x => x.IsWeapon);
+        private bool TryAttack(Combatant attacker, Tile @from, Tile @to)
+        {
+            var distance = @from.Distance(to);
+            var defender = @to.Combatant;
+            var weapon = attacker.Items.FirstOrDefault(x => x.IsWeapon);
 
-        //    var didAttack = false;
-        //    var range = 1.5;
+            var didAttack = false;
+            var range = 1.5;
 
-        //    if (weapon != null)
-        //    {
-        //        range = weapon.WeaponRange + 0.5;
-        //    }
+            if (weapon != null)
+            {
+                range = weapon.WeaponRange + 0.5;
+            }
 
-        //    if (distance < range)
-        //    {
-        //        didAttack = true;
-        //        //complicated attack stuff
-        //    }
+            if (distance < range)
+            {
+                didAttack = true;
+                var attackerRoll = GameHelpers.RollDie(attacker.Threat);
+                var defenderRoll = GameHelpers.RollDie(defender.Survivability);
 
-        //    return didAttack;
-        //}
+                if (attackerRoll.Sum() > defenderRoll.Sum())
+                {
+                    defender.Health -= attackerRoll.Sum() - defenderRoll.Sum();
+                }
+            }
+
+            return didAttack;
+        }
+
         public void DrawEventCard(Combatant player, EventType type)
         {
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
@@ -211,8 +213,12 @@ namespace AllIsFair.Models
                 case Stat.Perception:
                     numOfDice = player.Perception;
                     break;
-
-                //TODO add threat and survialaibilty
+                case Stat.Threat:
+                    numOfDice = player.Threat;
+                    break;
+                case Stat.Survivability:
+                    numOfDice = player.Survivability;
+                    break;
             }
 
 
@@ -236,12 +242,6 @@ namespace AllIsFair.Models
                 case Stat.Perception:
                     player.Perception += eventCard.StatReward*flip;
                     break;
-                //case Stat.Threat:
-                //    player.Threat += eventCard.StatReward * flip;
-                //    break;
-                //case Stat.Survivability:
-                //    player.Survivability += eventCard.StatReward * flip;
-                //    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

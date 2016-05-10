@@ -34,7 +34,7 @@ namespace AllIsFair.Models
         public virtual ICollection<Item> Items { get; set; } = new List<Item>();
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
 
-        public virtual ApplicationUser User { get; set; } //but that makes it a one to one issue?
+        public virtual ApplicationUser User { get; set; }
         public int CombatantTurn { get; set; }
 
         public Event Event { get; set; }

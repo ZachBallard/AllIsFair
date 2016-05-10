@@ -28,21 +28,51 @@ namespace AllIsFair.Controllers
 
         private GameManager mgr;
 
+        private TurnManager tmgr;
 
         public ActionResult GameState()
         {
-            //TODO
-            var model = new GameVM();
-            model.NumOfAlive = mgr.CurrentGame.Combatants.Count();
-            model.NumOfDead = mgr.CurrentGame.Combatants.Count();
+            //while (tmgr.CurrentTurn != mgr.CurrentPlayer)
+           // {
+                //do other players turns
+
+           //     var toLast = tmgr.TurnOrder.First();
+           //     tmgr.TurnOrder.Add(toLast);
+            //}
+
+            var model = new GameVM
+            {
+                NumOfAlive = mgr.CurrentGame.Combatants.Count(),
+                NumOfDead = mgr.CurrentGame.Combatants.Count()
+            };
+
+            model.GameActions = mgr.CurrentGame.GameActions.ToList();
+            model.PossibleMoves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
+
             model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
             {
+                Id = x.Id,
                 X = x.X,
                 Y = x.Y,
-                IsPossibleMove = false,
                 Type = (EventType) x.Type,
-                GraphicName = x.GraphicName
+                GraphicName = x.GraphicName,
+                CombatantGraphicName = x.Combatant?.GraphicName,
             });
+
+            model.Player = new PlayerVM()
+            {
+                Name = mgr.CurrentPlayer.Name,
+                Strength = mgr.CurrentPlayer.Strength.ToString(),
+                Speed = mgr.CurrentPlayer.Speed.ToString(),
+                Sanity = mgr.CurrentPlayer.Sanity.ToString(),
+                Perception = mgr.CurrentPlayer.Perception.ToString(),
+                Threat = mgr.CurrentPlayer.Threat.ToString(),
+                Survivability = mgr.CurrentPlayer.Survivability.ToString(),
+                Items = mgr.CurrentPlayer.Items.ToList(),
+                GraphicName = mgr.CurrentPlayer.GraphicName
+            };
+            model.Combatants = mgr.CurrentGame.Combatants;
+
             return View(model);
         }
 
@@ -56,8 +86,6 @@ namespace AllIsFair.Controllers
             return Json(result);
         }
 
-
-
         //GET: Game/DrawEvent
         [HttpPost]
         public ActionResult DrawEvent(EventType type)
@@ -68,9 +96,6 @@ namespace AllIsFair.Controllers
             var result = new { Message = "message" };
             return Json(result);
         }
-
-
-
 
         public ActionResult Delete()
         {

@@ -16,76 +16,32 @@
     </div>
 
     <div class="row map">
-        @foreach (var tile in Model.Tiles.OrderBy(t=>t.X).ThenBy(t=>t.Y))
+        @foreach (var tile in Model.Tiles.OrderBy(t => t.X).ThenBy(t => t.Y))
+        {
+            var color = "tileborder";
+
+            if (Model.PossibleMoves.Any(x => x.Id == tile.Id))
             {
-                var color = !tile.IsPossibleMove ? "tileborder" : "tilebordermove";
+                color = "tilebordermove";
+            }
 
             <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
-                <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y" />
+                <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
 
-                @if (tile.HasCombatant)
+                @if (tile.Combatant != null)
                 {
-                    <img class="img-responsive" style="width: 100%; z-index: 2; position: absolute; top: 0; left: 0;" src="~/Graphics/@tile.CombatantGraphicName" data-x="@tile.X" data-y="@tile.Y" />
+                    <img class="img-responsive" style="width: 100%; z-index: 2; position: absolute; top: 0; left: 0;" src="~/Graphics/@tile.CombatantGraphicName" data-x="@tile.X" data-y="@tile.Y"/>
                 }
             </div>
         }
     </div>
+
     <div class="row">
         <div class="col-xs-12 col-xs-offset-1">
             <div class="row bottombar stretchrow">
-                <div class="col-xs-3 col-xs-offset-1">
-
-                    @Html.Partial("PlayerStat", Model.Player)
-                    
-                </div>
                 
-                @*    @foreach (var item in Model.Player.Items)
-                    {
+                @Html.Partial("BottomInfo", Model.Player)
 
-                        if (!Model.Player.Items.Any(x => x.IsWeapon))
-                        {
-                                <div class="card">
-                                    <h4>No Weapon</h4>
-                                </div>
-                            }
-
-                            if (item.IsWeapon)
-                            {
-                                <div class="card">
-                                    <div class="cardtext">
-                                        <h4> @item.Name </h4>
-                                    </div>
-                                    <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
-                                    <div class="cardtext">
-                                        <h6>Range: @item.WeaponRange</h6>
-                                        <h6>Threat: +@item.ThreatBonus</h6>
-                                        <h6>Survival: +@item.SurvivalBonus</h6>
-                                    </div>
-                                </div>
-                            }
-
-                        }
-                        @foreach (var item in Model.Player.Items.Where(item => !item.IsWeapon))
-                    {
-                            <div class="card">
-                                <div class="cardtext">
-                                    <h4>@item.Name</h4>
-                                </div>
-                                <img class="img-responsive" style="width: 100%;" src="~/Graphics/@item.GraphicName" />
-                                <div class="cardtext">
-                                    <h6>Counters: @item.Counter</h6>
-                                    <h6>Threat: +@item.ThreatBonus</h6>
-                                    <h6>Survival: +@item.SurvivalBonus</h6>
-                                </div>
-                            </div>
-                        }
-                        @{ var cardsLeft = Model.Player.Items.Count(x => !x.IsWeapon); }
-                        @for (int i = cardsLeft; i < 4; i++)
-                    {
-                            <div class="card">
-                                <h4>No Item</h4>
-                            </div>
-                        }*@
             </div>
         </div>
     </div>
