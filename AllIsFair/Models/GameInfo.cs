@@ -13,7 +13,6 @@ namespace AllIsFair.Models
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
         public PlayerVM Player { get; set; } = new PlayerVM();
         public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
-        public List<Tile> PossibleMoves { get; set; } = new List<Tile>();
         public List<GameAction> GameActions { get; set; } = new List<GameAction>();
     }
 
@@ -40,6 +39,7 @@ namespace AllIsFair.Models
         public Combatant Combatant { get; set; }
         public string GraphicName { get; set; }
         public string CombatantGraphicName { get; set; }
+        public bool IsPossibleMove { get; set; }
     }
 
     public class GameInfo

@@ -68,6 +68,7 @@ h6 {
 }
 
 .tile {
+    border: solid lightsalmon 1px;
 }
 
 .card {
@@ -88,15 +89,12 @@ h6 {
     margin: 5px;
 }
 
-.tileborder {
-    border: solid lightsalmon 1px;
-}
 
-.tilebordermove {
+.possibleMove {
     border: solid red 3px;
 }
 
-    .tilebordermove:hover {
+    .possibleMove:hover {
         border: solid darkred 3px;
     }
 

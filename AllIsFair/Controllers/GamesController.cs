@@ -47,7 +47,7 @@ namespace AllIsFair.Controllers
             };
 
             model.GameActions = mgr.CurrentGame.GameActions.ToList();
-            model.PossibleMoves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
+            var moves =  mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
             model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
             {
@@ -57,6 +57,7 @@ namespace AllIsFair.Controllers
                 Type = (EventType) x.Type,
                 GraphicName = x.GraphicName,
                 CombatantGraphicName = x.Combatant?.GraphicName,
+                IsPossibleMove = moves.Any(t=>t.Id == x.Id)
             });
 
             model.Player = new PlayerVM()

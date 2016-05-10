@@ -18,15 +18,8 @@
     <div class="row map">
         @foreach (var tile in Model.Tiles.OrderBy(t => t.X).ThenBy(t => t.Y))
         {
-            var color = "tileborder";
-
-            if (Model.PossibleMoves.Any(x => x.Id == tile.Id))
-            {
-                color = "tilebordermove";
-            }
-
-            <div class="col-xs-1 tile container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
-                <img class="img-responsive @color" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
+            <div class="col-xs-1  container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
+                <img class="img-responsive tile @(tile.IsPossibleMove? "possibleMove" : "")" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
 
                 @if (tile.Combatant != null)
                 {
@@ -73,10 +66,10 @@
             }).done(function (didAttack) {
                 console.log(didAttack);
                 if (didAttack) {
-                    location.reload(true);
+                   // location.reload(true);
                 } else {
                     DrawCard(type);
-                    location.reload(true);
+                   // location.reload(true);
                 }
             });
         }
