@@ -6,33 +6,32 @@
 }
 
 
-<div class="container">
+<div class="container" ng-controller="gamecontroller">
 
     <div class="row">
         <div class="topbar container">
-            <h4>Alive: @Model.NumOfAlive</h4>
-            <h4>Dead: @(Model.NumOfDead)</h4>
+            <h4>Alive: {{game.NumOfAlive}}</h4>
+            <h4>Dead: {{game.NumOfDead}}</h4>
         </div>
     </div>
 
     <div class="row map">
-        @foreach (var tile in Model.Tiles.OrderBy(t => t.X).ThenBy(t => t.Y))
-        {
-            <div class="col-xs-1  container" style="padding: 0px; position: relative;" data-x="@tile.X" data-y="@tile.Y" data-type="@tile.Type">
-                <img class="img-responsive tile @(tile.IsPossibleMove? "possibleMove" : "")" style="position: relative; width: 100%; z-index: 1;" src="~/Graphics/@tile.GraphicName" data-x="@tile.X" data-y="@tile.Y"/>
 
-                @if (tile.Combatant != null)
-                {
-                    <img class="img-responsive" style="width: 100%; z-index: 2; position: absolute; top: 0; left: 0;" src="~/Graphics/@tile.CombatantGraphicName" data-x="@tile.X" data-y="@tile.Y"/>
-                }
-            </div>
-        }
+        <div ng-click="tileClick(tile)" ng-repeat="tile in game.Tiles | orderBy:'X' | orderBy:'Y'" ng-class="{'possibleMove' : tile.IsPossibleMove}" class="col-xs-1 tile">
+            <img class="img-responsive" ng-src="{{tile.GraphicName}}" />
+
+            <img class="img-responsive player" ng-src="{{tile.CombatantGraphicName}}" ng-show="tile.CombatantGraphicName" />
+        </div>
+
+
+
+       
     </div>
 
     <div class="row">
         <div class="col-xs-12 col-xs-offset-1">
             <div class="row bottombar stretchrow">
-                
+
                 @Html.Partial("BottomInfo", Model.Player)
 
             </div>
@@ -46,40 +45,9 @@
 
 @section scripts{
     <script>
-        $(document).ready(function () {
-            $('#partialload').load('/Games/PartialManager');
-        });
+     
+     
 
-        $(".tile").click(function () {
-            TryMove($(this));
-        });
-
-        function TryMove(item) {
-            var x = item.data('x');
-            var y = item.data('y');
-            var type = item.data('type');
-            console.log(x, y);
-            $.ajax({
-                type: "POST",
-                data: { x2: x, y2: y },
-                url: '@Url.Action("TryMove", "Games")'
-            }).done(function (didAttack) {
-                console.log(didAttack);
-                if (didAttack) {
-                    location.reload(true);
-                } else {
-                    DrawCard(type);
-                    location.reload(true);
-                }
-            });
-        }
-
-        function DrawCard(type) {
-            $.ajax({
-                type: "POST",
-                data: { type: type },
-                url: '@Url.Action("DrawEvent", "Games")'
-            });
-        }
+     
     </script>
 }

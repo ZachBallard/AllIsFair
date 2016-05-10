@@ -68,6 +68,22 @@ h6 {
 }
 
 .tile {
+    padding: 0px;
+    position: relative;
+}
+
+.tile img.player {
+    width: 100%;
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.tile img {
+    position: relative;
+    width: 100%;
+    z-index: 1;
     border: solid lightsalmon 1px;
 }
 
@@ -90,11 +106,11 @@ h6 {
 }
 
 
-.possibleMove {
+.possibleMove img {
     border: solid red 3px;
 }
 
-    .possibleMove:hover {
+    .possibleMove img:hover {
         border: solid darkred 3px;
     }
 

@@ -12,8 +12,8 @@ namespace AllIsFair.Models
         public int NumOfDead { get; set; }
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
         public PlayerVM Player { get; set; } = new PlayerVM();
-        public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
-        public List<GameAction> GameActions { get; set; } = new List<GameAction>();
+       // public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
+        //public List<GameAction> GameActions { get; set; } = new List<GameAction>();
     }
 
     public class PlayerVM
@@ -27,7 +27,35 @@ namespace AllIsFair.Models
         public string Perception { get; set; }
         public string Threat { get; set; }
         public string Survivability { get; set; }
-        public List<Item> Items { get; set; } = new List<Item>();
+        public List<ItemVM> Items { get; set; } = new List<ItemVM>();
+    }
+
+    public class ItemVM
+    {
+
+        public ItemVM(Item x)
+        {
+            Id = x.Id;
+            Name = x.Name;
+            GraphicName = x.GraphicName;
+            Counter = x.Counter;
+            DoesCount = x.DoesCount;
+            IsWeapon = x.IsWeapon;
+            WeaponRange = x.WeaponRange;
+            SurvivalBonus = x.SurvivalBonus;
+            ThreatBonus = x.ThreatBonus;
+
+        }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string GraphicName { get; set; } //use for finding in folder
+        public int Counter { get; set; }
+        public bool DoesCount { get; set; }
+        public bool IsWeapon { get; set; }
+        public int WeaponRange { get; set; }
+        public int SurvivalBonus { get; set; }
+        public int ThreatBonus { get; set; }
     }
 
     public class TileVM
@@ -36,11 +64,11 @@ namespace AllIsFair.Models
         public int X { get; set; }
         public int Y { get; set; }
         public EventType Type { get; set; }
-        public Combatant Combatant { get; set; }
         public string GraphicName { get; set; }
         public string CombatantGraphicName { get; set; }
         public bool IsPossibleMove { get; set; }
     }
+
 
     public class GameInfo
     {

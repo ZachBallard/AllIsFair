@@ -30,6 +30,44 @@ namespace AllIsFair.Controllers
 
         private TurnManager tmgr;
 
+        public ActionResult GetGameState()
+        {
+            var model = new GameVM
+            {
+                NumOfAlive = mgr.CurrentGame.Combatants.Count(),
+                NumOfDead = mgr.CurrentGame.Combatants.Count()
+            };
+
+           // model.GameActions = mgr.CurrentGame.GameActions.ToList();
+            var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
+
+            model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
+            {
+                Id = x.Id,
+                X = x.X,
+                Y = x.Y,
+                Type = (EventType)x.Type,
+                GraphicName = "/Graphics/" + x.GraphicName,
+                CombatantGraphicName = x.Combatant == null? "": "/Graphics/" + x.Combatant.GraphicName,
+                IsPossibleMove = moves.Any(t => t.Id == x.Id)
+            });
+
+            model.Player = new PlayerVM()
+            {
+                Name = mgr.CurrentPlayer.Name,
+                Strength = mgr.CurrentPlayer.Strength.ToString(),
+                Speed = mgr.CurrentPlayer.Speed.ToString(),
+                Sanity = mgr.CurrentPlayer.Sanity.ToString(),
+                Perception = mgr.CurrentPlayer.Perception.ToString(),
+                Threat = mgr.CurrentPlayer.Threat.ToString(),
+                Survivability = mgr.CurrentPlayer.Survivability.ToString(),
+                Items = mgr.CurrentPlayer.Items.Select(x=> new ItemVM(x)).ToList(),
+                GraphicName = mgr.CurrentPlayer.GraphicName
+            };
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult GameState()
         {
             //while (tmgr.CurrentTurn != mgr.CurrentPlayer)
@@ -46,7 +84,7 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count()
             };
 
-            model.GameActions = mgr.CurrentGame.GameActions.ToList();
+            //model.GameActions = mgr.CurrentGame.GameActions.ToList();
             var moves =  mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
             model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
@@ -55,8 +93,8 @@ namespace AllIsFair.Controllers
                 X = x.X,
                 Y = x.Y,
                 Type = (EventType) x.Type,
-                GraphicName = x.GraphicName,
-                CombatantGraphicName = x.Combatant?.GraphicName,
+                GraphicName = "~/Graphics/" +  x.GraphicName,
+                CombatantGraphicName = x.Combatant == null ? "" : "~/Graphics/" + x.Combatant.GraphicName,
                 IsPossibleMove = moves.Any(t=>t.Id == x.Id)
             });
 
@@ -69,10 +107,9 @@ namespace AllIsFair.Controllers
                 Perception = mgr.CurrentPlayer.Perception.ToString(),
                 Threat = mgr.CurrentPlayer.Threat.ToString(),
                 Survivability = mgr.CurrentPlayer.Survivability.ToString(),
-                Items = mgr.CurrentPlayer.Items.ToList(),
+                Items = mgr.CurrentPlayer.Items.Select(x => new ItemVM(x)).ToList(),
                 GraphicName = mgr.CurrentPlayer.GraphicName
             };
-            model.Combatants = mgr.CurrentGame.Combatants;
 
             return View(model);
         }
