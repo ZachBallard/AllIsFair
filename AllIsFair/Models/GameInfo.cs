@@ -12,8 +12,24 @@ namespace AllIsFair.Models
         public int NumOfDead { get; set; }
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
         public PlayerVM Player { get; set; } = new PlayerVM();
-       // public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
+        // public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
         //public List<GameAction> GameActions { get; set; } = new List<GameAction>();
+
+        public List<int> DieResult { get; set; } = new List<int>();
+        public List<int> DieResultEnemy { get; set; } = new List<int>();
+        public EventVM Event { get; set; }
+        public ItemVM Reward { get; set; }
+    }
+
+    public class EventVM
+    {
+        public string Name { get; set; }
+        public string GraphicName { get; set; } //use for finding in folder
+        public Stat RequiredStat { get; set; } //st sp sa pe th su
+        public int TargetNumber { get; set; }
+        public EventType Type { get; set; } //which tile can draw
+        public int StatReward { get; set; }
+        public string Description { get; set; }
     }
 
     public class PlayerVM
@@ -67,20 +83,5 @@ namespace AllIsFair.Models
         public string GraphicName { get; set; }
         public string CombatantGraphicName { get; set; }
         public bool IsPossibleMove { get; set; }
-    }
-
-
-    public class GameInfo
-    {
-        public int Id { get; set; }
-
-        public ICollection<Tile> Tiles { get; set; } = new List<Tile>();
-
-        public ICollection<Combatant> Combatants { get; set; } = new List<Combatant>();
-
-        public int AliveCombatants => Combatants.Count(x => x.Killer == null);
-
-        public Combatant Player => Combatants.FirstOrDefault(x => x.IsPlayer);
-
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Security.Policy;
 using WebGrease.Css.Extensions;
 
 namespace AllIsFair.Models
@@ -10,6 +11,13 @@ namespace AllIsFair.Models
     {
         private readonly int _currentGameId;
         private readonly string _currentUserId;
+
+        private bool IsPlayerAction { get; set; } // determine who is on defending if attack
+
+        public List<int> DieResult { get; set; } = new List<int>();
+        public List<int> DieResultEnemy { get; set; } = new List<int>(); // if empty event was drawn else attack
+        public Event Event { get; set; }
+        public int Healthloss { get; set; }
 
         public GameManager(string currentUserId, ApplicationDbContext dbContext)
         {
@@ -39,7 +47,7 @@ namespace AllIsFair.Models
                 Combatants = GenerateCombatants(1)
             };
 
-            game.Tiles.ForEach(x=>x.Game = game);
+            game.Tiles.ForEach(x => x.Game = game);
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
             var enemyStartingTile = game.Tiles.First(x => x.X == 2 && x.Y == 2);
@@ -78,7 +86,7 @@ namespace AllIsFair.Models
                         file = "Beach.png";
                     }
 
-                    map.Add(new Tile {GraphicName = file, X = i, Y = j});
+                    map.Add(new Tile { GraphicName = file, X = i, Y = j });
                 }
             }
 
@@ -106,7 +114,7 @@ namespace AllIsFair.Models
                 WeaponRange = 1,
                 ThreatBonus = 1
             };
-            var emptyCard = new Item {Combatant = player, GraphicName = "unknowncard.png", Name = "???"};
+            var emptyCard = new Item { Combatant = player, GraphicName = "unknowncard.png", Name = "???" };
             player.Items.Add(knife);
             player.Items.Add(emptyCard);
 
@@ -134,16 +142,17 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-        public void PlayerMove(int newX, int newY, Combatant attacker)
+        public int PlayerMove(int newX, int newY, Combatant attacker)
         {
             var to = CurrentGame.Tiles.GetTile(newX, newY);
+            var didAttack = false;
 
             if (attacker.CanMove(to))
             {
                 if (to.Combatant != null && to.Combatant != attacker)
                 {
                     //attack logic
-                    var didAttack = TryAttack(attacker, attacker.Tile, to);
+                    didAttack = TryAttack(attacker, attacker.Tile, to);
                     if (didAttack)
                     {
                         RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {newX},{newY}.");
@@ -160,6 +169,11 @@ namespace AllIsFair.Models
             }
 
             _db.SaveChanges();
+            if (didAttack)
+            {
+                return @to.Type;
+            }
+            return 0;
         }
 
         private bool TryAttack(Combatant attacker, Tile @from, Tile @to)
@@ -167,6 +181,8 @@ namespace AllIsFair.Models
             var distance = @from.Distance(to);
             var defender = @to.Combatant;
             var weapon = attacker.Items.FirstOrDefault(x => x.IsWeapon);
+
+            IsPlayerAction = attacker.IsPlayer;
 
             var didAttack = false;
             var range = 1.5;
@@ -181,13 +197,17 @@ namespace AllIsFair.Models
                 didAttack = true;
                 var attackerRoll = GameHelpers.RollDie(attacker.Threat);
                 var defenderRoll = GameHelpers.RollDie(defender.Survivability);
+                DieResult = attackerRoll;
+                DieResultEnemy = defenderRoll;
 
                 if (attackerRoll.Sum() > defenderRoll.Sum())
                 {
                     defender.Health -= attackerRoll.Sum() - defenderRoll.Sum();
+                    Healthloss = defender.Health;
                 }
             }
 
+            _db.SaveChanges();
             return didAttack;
         }
 
@@ -196,7 +216,7 @@ namespace AllIsFair.Models
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
             CurrentGame.Events.Remove(eventCard);
             CurrentGame.Events.Add(eventCard);
-
+            Event = eventCard;
 
             var numOfDice = 0;
             switch (eventCard.RequiredStat)
@@ -223,7 +243,6 @@ namespace AllIsFair.Models
 
 
             var dieResults = GameHelpers.RollDie(numOfDice);
-
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
 
             var flip = failedRoll ? -1 : 1;
@@ -231,16 +250,16 @@ namespace AllIsFair.Models
             switch (eventCard.RequiredStat)
             {
                 case Stat.Strength:
-                    player.Strength += eventCard.StatReward*flip;
+                    player.Strength += eventCard.StatReward * flip;
                     break;
                 case Stat.Speed:
-                    player.Speed += eventCard.StatReward*flip;
+                    player.Speed += eventCard.StatReward * flip;
                     break;
                 case Stat.Sanity:
-                    player.Sanity += eventCard.StatReward*flip;
+                    player.Sanity += eventCard.StatReward * flip;
                     break;
                 case Stat.Perception:
-                    player.Perception += eventCard.StatReward*flip;
+                    player.Perception += eventCard.StatReward * flip;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -277,6 +296,15 @@ namespace AllIsFair.Models
 
 
             _db.SaveChanges();
+        }
+
+        public void RemoveResults()
+        {
+            IsPlayerAction = false;
+            DieResult = new List<int>();
+            DieResultEnemy = new List<int>();
+            Event = new Event();
+            Healthloss = 0;
         }
     }
 }

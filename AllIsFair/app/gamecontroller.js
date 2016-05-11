@@ -28,9 +28,22 @@
                 return;
             }
             console.log(tile);
-            $http.post("/games/trymove", { x2: tile.X, y2: tile.Y }).then(function(res) {
+            $http.post("/games/trymove", { x2: tile.X, y2: tile.Y }).then(function(eventType, res) {
                 console.log(res.data);
                 refreshGameState();
+                if (eventType === 0) {
+                    $http.post("/games/DrawEvent"), { eventType }.then(function() {
+                        //handle event result screen
+                        //call opponent action
+                    });
+                } else {
+                    //we know they attacked
+                    $http.post("/games/drawevent"), { eventType }.then(function() {
+                        //call oppents action
+                    });
+                    
+                }
+                
             });
 
         }
