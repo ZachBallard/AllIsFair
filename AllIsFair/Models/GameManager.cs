@@ -15,7 +15,9 @@ namespace AllIsFair.Models
         private bool IsPlayerAction { get; set; } // determine who is on defending if attack
 
         public List<int> DieResult { get; set; } = new List<int>();
+        public List<string> DieResultGraphics { get; set; } = new List<string>();
         public List<int> DieResultEnemy { get; set; } = new List<int>(); // if empty event was drawn else attack
+        public List<string> DieResultEnemyGraphics { get; set; } = new List<string>(); 
         public Event Event { get; set; }
         public int Healthloss { get; set; }
 
@@ -305,6 +307,43 @@ namespace AllIsFair.Models
             DieResultEnemy = new List<int>();
             Event = new Event();
             Healthloss = 0;
+        }
+
+        public List<string> GetDieGraphics(List<int> dieResult)
+        {
+            var graphicList = new List<string>();
+
+            if (!dieResult.Any())
+            {
+                return graphicList;
+            }
+
+            foreach (var result in dieResult)
+            {
+                switch (result)
+                {
+                    case 1:
+                        graphicList.Add("/Graphics/die1.png");
+                        break;
+                    case 2:
+                        graphicList.Add("/Graphics/die2.png");
+                        break;
+                    case 3:
+                        graphicList.Add("/Graphics/die3.png");
+                        break;
+                    case 4:
+                        graphicList.Add("/Graphics/die4.png");
+                        break;
+                    case 5:
+                        graphicList.Add("/Graphics/die5.png");
+                        break;
+                    case 6:
+                        graphicList.Add("/Graphics/die6.png");
+                        break;
+                }
+            }
+
+            return graphicList;
         }
     }
 }

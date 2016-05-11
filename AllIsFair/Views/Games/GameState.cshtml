@@ -5,11 +5,10 @@
 
 }
 
-
 <div class="container" ng-controller="gamecontroller">
 
     <div class="row">
-        <div class="topbar container">
+        <div class="topbar">
             <h4>Alive: {{game.NumOfAlive}}</h4>
             <h4>Dead: {{game.NumOfDead}}</h4>
         </div>
@@ -22,15 +21,29 @@
 
             <img class="img-responsive player" ng-src="{{tile.CombatantGraphicName}}" ng-show="tile.CombatantGraphicName" />
         </div>
-            
-        <div class="container" ng-controller="gamecontroller" ng-if="">
 
-        </div>
-        <div>
-            
-        </div>
+        @{/*<div class="container" ng-if="game.DieResultEnemy.length">
+            <div class="card">
+                <div class="cardtext">
+                    <h4>{{Event.Name}}</h4>
+                </div>
+                <img class="img-responsive" style="width: 100%;" src="~/Graphics/{{Event.GraphicName}}"/>
+                <div class="cardtext">
+                    <h6>{{Event.Description}}</h6>
+                    <h6>{{Event.TargetNumber}}</h6>
+                </div>
+            </div>
+            <div class="container" ng-repeat="result in game.DieResultGraphics">
+                <img class="img-responsive" ng-src="{{DieResultGraphics}}"/>
+            </div>
+            <div class="container" ng-if="game.DieResultEnemy.length" ng-repeat="result in game.DieResultEnemyGraphics">
+                <img class="img-responsive" ng-src="{{DieResultEnemyGraphics}}"/>
+            </div>
+            <div class="container" ng-if="game.HealthLoss != 0">
+                <h4>- {{game.Healthloss}}</h4>
+            </div>
+        </div>        */}
 
-       
     </div>
 
     <div class="row">

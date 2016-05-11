@@ -68,18 +68,24 @@ namespace AllIsFair.Controllers
 
             model.DieResult = mgr.DieResult;
             model.DieResultEnemy = mgr.DieResultEnemy;
-            model.Event = new EventVM()
-            {
-                GraphicName = mgr.Event.GraphicName,
-                Name = mgr.Event.Name,
-                Description = mgr.Event.Description,
-                RequiredStat = mgr.Event.RequiredStat,
-                StatReward = mgr.Event.StatReward,
-                TargetNumber = mgr.Event.TargetNumber,
-                Type = mgr.Event.Type
-            };
+            model.DieResultGraphics = mgr.GetDieGraphics(model.DieResult);
+            model.DieResultEnemyGraphics = mgr.GetDieGraphics(model.DieResultEnemy);
 
-            model.Reward = new ItemVM(mgr.Event.ItemReward);
+            if (mgr.Event != null)
+            {
+                model.Event = new EventVM()
+                {
+                    GraphicName = mgr.Event.GraphicName,
+                    Name = mgr.Event.Name,
+                    Description = mgr.Event.Description,
+                    RequiredStat = mgr.Event.RequiredStat,
+                    StatReward = mgr.Event.StatReward,
+                    TargetNumber = mgr.Event.TargetNumber,
+                    Type = mgr.Event.Type
+                };
+
+                model.Reward = new ItemVM(mgr.Event.ItemReward);
+            }
 
             mgr.RemoveResults();
 

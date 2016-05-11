@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace AllIsFair.Models
 {
@@ -22,6 +23,7 @@ namespace AllIsFair.Models
     {
         public int Id { get; set; }
         public virtual Combatant Combatant { get; set; }
+        [Required]
         public virtual Game CurrentGame { get; set; }
         public Action Action { get; set; }
         public string Message { get; set; }

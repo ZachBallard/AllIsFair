@@ -172,6 +172,14 @@
     <Compile Include="Migrations\201605092341137_InitialCreation.Designer.cs">
       <DependentUpon>201605092341137_InitialCreation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605111907522_ItemCombatantRequired.cs" />
+    <Compile Include="Migrations\201605111907522_ItemCombatantRequired.Designer.cs">
+      <DependentUpon>201605111907522_ItemCombatantRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605111910048_GameActionsRequiredGame.cs" />
+    <Compile Include="Migrations\201605111910048_GameActionsRequiredGame.Designer.cs">
+      <DependentUpon>201605111910048_GameActionsRequiredGame.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\GameAction.cs" />
     <Compile Include="Models\GameHelpers.cs" />
     <Compile Include="Models\GameManager.cs" />
@@ -202,6 +210,12 @@
     <Content Include="Graphics\allisfairlogo.png" />
     <Content Include="Graphics\Beach.png" />
     <Content Include="Graphics\bloodtile.png" />
+    <Content Include="Graphics\die1.png" />
+    <Content Include="Graphics\die2.png" />
+    <Content Include="Graphics\die3.png" />
+    <Content Include="Graphics\die4.png" />
+    <Content Include="Graphics\die5.png" />
+    <Content Include="Graphics\die6.png" />
     <Content Include="Graphics\Enemy.png" />
     <Content Include="Graphics\fightbutton.png" />
     <Content Include="Graphics\Forest.png" />
@@ -276,6 +290,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201605092341137_InitialCreation.resx">
       <DependentUpon>201605092341137_InitialCreation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605111907522_ItemCombatantRequired.resx">
+      <DependentUpon>201605111907522_ItemCombatantRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605111910048_GameActionsRequiredGame.resx">
+      <DependentUpon>201605111910048_GameActionsRequiredGame.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

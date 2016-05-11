@@ -17,6 +17,8 @@ namespace AllIsFair.Models
 
         public List<int> DieResult { get; set; } = new List<int>();
         public List<int> DieResultEnemy { get; set; } = new List<int>();
+        public List<string> DieResultGraphics { get; set; } = new List<string>();
+        public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
         public EventVM Event { get; set; }
         public ItemVM Reward { get; set; }
     }
