@@ -19,8 +19,18 @@ namespace AllIsFair.Models
         public List<int> DieResultEnemy { get; set; } = new List<int>();
         public List<string> DieResultGraphics { get; set; } = new List<string>();
         public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
+        public List<GameActionVM> GameActions { get; set; } = new List<GameActionVM>();
         public EventVM Event { get; set; }
         public ItemVM Reward { get; set; }
+    }
+
+    public class GameActionVM
+    {
+        public int Id { get; set; }
+        public string PlayerName { get; set; }
+        public string Action { get; set; }
+        public string Message { get; set; }
+        public string Date { get; set; }
     }
 
     public class EventVM
@@ -45,6 +55,7 @@ namespace AllIsFair.Models
         public string Perception { get; set; }
         public string Threat { get; set; }
         public string Survivability { get; set; }
+        public List<ItemVM> Weapons { get; set; } = new List<ItemVM>();
         public List<ItemVM> Items { get; set; } = new List<ItemVM>();
     }
 
@@ -55,7 +66,7 @@ namespace AllIsFair.Models
         {
             Id = x.Id;
             Name = x.Name;
-            GraphicName = x.GraphicName;
+            GraphicName = "/Graphics/" + x.GraphicName;
             Counter = x.Counter;
             DoesCount = x.DoesCount;
             IsWeapon = x.IsWeapon;
