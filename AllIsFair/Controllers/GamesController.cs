@@ -65,26 +65,26 @@ namespace AllIsFair.Controllers
                 GraphicName = mgr.CurrentPlayer.GraphicName
             };
 
-            model.IsPlayerAction = mgr.CurrentGame.TurnManager.IsPlayerAction;
-            model.DieResult = mgr.CurrentGame.TurnManager.DieResult;
-            model.DieResultEnemy = mgr.CurrentGame.TurnManager.DieResultEnemy;
+            model.IsPlayerAction = mgr.TurnManager.IsPlayerAction;
+            model.DieResult = mgr.TurnManager.DieResult;
+            model.DieResultEnemy = mgr.TurnManager.DieResultEnemy;
             model.DieResultGraphics = mgr.GetDieGraphics(model.DieResult);
             model.DieResultEnemyGraphics = mgr.GetDieGraphics(model.DieResultEnemy);
 
-            if (mgr.CurrentGame.TurnManager.Event != null)
+            if (mgr.TurnManager.Event != null)
             {
                 model.Event = new EventVM()
                 {
-                    GraphicName = mgr.CurrentGame.TurnManager.Event.GraphicName,
-                    Name = mgr.CurrentGame.TurnManager.Event.Name,
-                    Description = mgr.CurrentGame.TurnManager.Event.Description,
-                    RequiredStat = mgr.CurrentGame.TurnManager.Event.RequiredStat,
-                    StatReward = mgr.CurrentGame.TurnManager.Event.StatReward,
-                    TargetNumber = mgr.CurrentGame.TurnManager.Event.TargetNumber,
-                    Type = mgr.CurrentGame.TurnManager.Event.Type
+                    GraphicName = mgr.TurnManager.Event.GraphicName,
+                    Name = mgr.TurnManager.Event.Name,
+                    Description = mgr.TurnManager.Event.Description,
+                    RequiredStat = mgr.TurnManager.Event.RequiredStat,
+                    StatReward = mgr.TurnManager.Event.StatReward,
+                    TargetNumber = mgr.TurnManager.Event.TargetNumber,
+                    Type = mgr.TurnManager.Event.Type
                 };
 
-                model.Reward = new ItemVM(mgr.CurrentGame.TurnManager.Event.ItemReward);
+                model.Reward = new ItemVM(mgr.TurnManager.Event.ItemReward);
             }
             model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(10).Select(x=> new GameActionVM()
             {
@@ -95,7 +95,7 @@ namespace AllIsFair.Controllers
                PlayerName = x.Combatant?.Name
             }).ToList();
 
-            mgr.RemoveResults();
+            mgr.TurnManager.RemoveResults();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Validation;
 using System.Linq;
-using System.Security.Policy;
 using WebGrease.Css.Extensions;
 
 namespace AllIsFair.Models
@@ -12,7 +10,6 @@ namespace AllIsFair.Models
         private readonly int _currentGameId;
         private readonly string _currentUserId;
 
-
         public GameManager(string currentUserId, ApplicationDbContext dbContext)
         {
             _currentUserId = currentUserId;
@@ -20,7 +17,11 @@ namespace AllIsFair.Models
             var game = _db.Games.FirstOrDefault(x => x.User.Id == currentUserId) ?? CreateNewGame();
 
             _currentGameId = game.Id;
+
+            TurnManager = new TurnManager(_db);
         }
+
+        public TurnManager TurnManager { get; set; }
 
         public Combatant CurrentPlayer
         {
@@ -41,7 +42,6 @@ namespace AllIsFair.Models
                 Combatants = GenerateCombatants(1)
             };
 
-            game.TurnManager = new TurnManager();
             game.Tiles.ForEach(x => x.Game = game);
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
@@ -97,7 +97,8 @@ namespace AllIsFair.Models
                 Strength = 4,
                 Speed = 2,
                 Sanity = 4,
-                Perception = 3
+                Perception = 3,
+                TurnOrder = 1
             };
 
             var knife = new Item
@@ -107,7 +108,9 @@ namespace AllIsFair.Models
                 Name = "Knife",
                 IsWeapon = true,
                 WeaponRange = 1,
-                ThreatBonus = 1
+                ThreatBonus = 1,
+               
+
             };
             var emptyCard = new Item { Combatant = player, GraphicName = "unknowncard.png", Name = "???" };
             player.Items.Add(knife);
@@ -122,7 +125,8 @@ namespace AllIsFair.Models
                     Strength = 4,
                     Speed = 2,
                     Sanity = 5,
-                    Perception = 3
+                    Perception = 3,
+                    TurnOrder = 2 + i
                 };
 
                 combatants.Add(enemy);
@@ -137,38 +141,29 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-        public int PlayerMove(int newX, int newY, Combatant attacker)
+        public EventType PlayerMove(int newX, int newY, Combatant attacker)
         {
             var to = CurrentGame.Tiles.GetTile(newX, newY);
-            var didAttack = false;
 
-            if (attacker.CanMove(to))
+            if (!attacker.CanMove(to))
             {
-                if (to.Combatant != null && to.Combatant != attacker)
-                {
-                    //attack logic
-                    didAttack = TryAttack(attacker, attacker.Tile, to);
-                    if (didAttack)
-                    {
-                        RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {newX},{newY}.");
-                    }
-                }
-                else
-                {
-                    var oldX = attacker.Tile.X;
-                    var oldY = attacker.Tile.Y;
-                    attacker.Tile.Combatant = null;
-                    attacker.Tile = to;
-                    RecordAction(Action.Move, $"Moved from {oldX},{oldY} to {newX},{newY}.");
-                }
+                return EventType.None;
             }
 
+            if (to.Combatant != null && to.Combatant != attacker)
+            {
+                //attack logic
+                 TryAttack(attacker, attacker.Tile, to);
+                _db.SaveChanges();
+                return EventType.None;
+
+            }
+
+            attacker.Tile.Combatant = null;
+            attacker.Tile = to;
+            RecordAction(Action.Move, $"Moved from {attacker.Tile.X},{attacker.Tile.Y} to {newX},{newY}.");
             _db.SaveChanges();
-            if (didAttack)
-            {
-                return @to.Type;
-            }
-            return 0;
+            return @to.Type;
         }
 
         private bool TryAttack(Combatant attacker, Tile @from, Tile @to)
@@ -177,9 +172,9 @@ namespace AllIsFair.Models
             var defender = @to.Combatant;
             var weapon = attacker.Items.FirstOrDefault(x => x.IsWeapon);
 
-            CurrentGame.TurnManager.IsPlayerAction = attacker.IsPlayer;
+            TurnManager.IsPlayerAction = attacker.IsPlayer;
 
-            var didAttack = false;
+           
             var range = 1.5;
 
             if (weapon != null)
@@ -187,25 +182,31 @@ namespace AllIsFair.Models
                 range = weapon.WeaponRange + 0.5;
             }
 
-            if (distance < range)
+            if (distance > range)
             {
-                didAttack = true;
-                var attackerRoll = GameHelpers.RollDie(attacker.Threat);
-                var defenderRoll = GameHelpers.RollDie(defender.Survivability);
-                CurrentGame.TurnManager.DieResult = attackerRoll;
-                CurrentGame.TurnManager.DieResultEnemy = defenderRoll;
-                CurrentGame.TurnManager.DieResultGraphics = GetDieGraphics(attackerRoll);
-                CurrentGame.TurnManager.DieResultEnemyGraphics = GetDieGraphics(defenderRoll);
-
-                if (attackerRoll.Sum() > defenderRoll.Sum())
-                {
-                    defender.Health -= attackerRoll.Sum() - defenderRoll.Sum();
-                    CurrentGame.TurnManager.Healthloss = defender.Health;
-                }
+                return false;
             }
 
+
+            var attackerRoll = GameHelpers.RollDie(attacker.Threat);
+            var defenderRoll = GameHelpers.RollDie(defender.Survivability);
+
+            TurnManager.DieResult = attackerRoll;
+            TurnManager.DieResultEnemy = defenderRoll;
+            TurnManager.DieResultGraphics = GetDieGraphics(attackerRoll);
+            TurnManager.DieResultEnemyGraphics = GetDieGraphics(defenderRoll);
+
+            if (attackerRoll.Sum() > defenderRoll.Sum())
+            {
+                defender.Health -= attackerRoll.Sum() - defenderRoll.Sum();
+                TurnManager.Healthloss = defender.Health;
+            }
+
+            RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.");
             _db.SaveChanges();
-            return didAttack;
+
+
+            return true;
         }
 
         public void DrawEventCard(Combatant player, EventType type)
@@ -213,7 +214,7 @@ namespace AllIsFair.Models
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
             CurrentGame.Events.Remove(eventCard);
             CurrentGame.Events.Add(eventCard);
-            CurrentGame.TurnManager.Event = eventCard;
+            TurnManager.Event = eventCard;
 
             var numOfDice = 0;
             switch (eventCard.RequiredStat)
@@ -244,8 +245,8 @@ namespace AllIsFair.Models
 
             var flip = failedRoll ? -1 : 1;
 
-            CurrentGame.TurnManager.DieResult = dieResults;
-            CurrentGame.TurnManager.DieResultGraphics = GetDieGraphics(dieResults);
+            TurnManager.DieResult = dieResults;
+            TurnManager.DieResultGraphics = GetDieGraphics(dieResults);
 
             switch (eventCard.RequiredStat)
             {
@@ -281,7 +282,7 @@ namespace AllIsFair.Models
                 }
                 else
                 {
-                    if (player.CurrentEquip >= player.MaxEquip)
+                    if (player.ItemsEquippedCount >= player.MaxEquip)
                     {
                         var lowestItem =
                             player.Items.Where(x => !x.IsWeapon).OrderBy(x => x.SurvivalBonus).FirstOrDefault();
@@ -298,48 +299,13 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-        public void RemoveResults()
-        {
-            CurrentGame.TurnManager.IsPlayerAction = false;
-            CurrentGame.TurnManager.DieResult = new List<int>();
-            CurrentGame.TurnManager.DieResultEnemy = new List<int>();
-            CurrentGame.TurnManager.Event = new Event();
-            CurrentGame.TurnManager.Healthloss = 0;
-        }
+     
 
-        public List<string> GetDieGraphics(List<int> dieResult)
+        public List<string> GetDieGraphics(IEnumerable<int> dieResult)
         {
             var graphicList = new List<string>();
 
-            if (!dieResult.Any())
-            {
-                return graphicList;
-            }
-
-            foreach (var result in dieResult)
-            {
-                switch (result)
-                {
-                    case 1:
-                        graphicList.Add("/Graphics/die1.png");
-                        break;
-                    case 2:
-                        graphicList.Add("/Graphics/die2.png");
-                        break;
-                    case 3:
-                        graphicList.Add("/Graphics/die3.png");
-                        break;
-                    case 4:
-                        graphicList.Add("/Graphics/die4.png");
-                        break;
-                    case 5:
-                        graphicList.Add("/Graphics/die5.png");
-                        break;
-                    case 6:
-                        graphicList.Add("/Graphics/die6.png");
-                        break;
-                }
-            }
+            graphicList.AddRange(dieResult.Select(result => $"/Graphics/die{result}.png"));
 
             return graphicList;
         }

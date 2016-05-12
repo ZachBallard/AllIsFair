@@ -6,6 +6,7 @@ namespace AllIsFair.Models
 
     public enum EventType
     {
+        None = 0,
         City = 1,
         Wilderness = 2,
         Expanse = 3,
