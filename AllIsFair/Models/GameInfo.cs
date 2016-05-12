@@ -13,14 +13,8 @@ namespace AllIsFair.Models
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
         public PlayerVM Player { get; set; } = new PlayerVM();
 
-        public bool IsPlayerAction { get; set; }
-        public List<int> DieResult { get; set; } = new List<int>();
-        public List<int> DieResultEnemy { get; set; } = new List<int>();
-        public List<string> DieResultGraphics { get; set; } = new List<string>();
-        public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
+        public ResultVM Result { get; set; } = new ResultVM();
         public List<GameActionVM> GameActions { get; set; } = new List<GameActionVM>();
-        public EventVM Event { get; set; }
-        public ItemVM Reward { get; set; }
     }
 
     public class GameActionVM
@@ -95,5 +89,19 @@ namespace AllIsFair.Models
         public string GraphicName { get; set; }
         public string CombatantGraphicName { get; set; }
         public bool IsPossibleMove { get; set; }
+    }
+
+    public class ResultVM
+    {
+        public int TurnNumber { get; set; }
+        public int Healthloss { get; set; }
+        public int StatReward { get; set; }
+
+        public List<int> Rolls { get; set; } = new List<int>();
+        public List<int> EnemyRolls { get; set; } = new List<int>();
+        public List<string> DieResultGraphics { get; set; } = new List<string>();
+        public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
+        public EventVM Event { get; set; }
+        public ItemVM ItemReward { get; set; }
     }
 }

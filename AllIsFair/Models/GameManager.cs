@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using WebGrease.Css.Extensions;
 
 namespace AllIsFair.Models
@@ -17,15 +18,12 @@ namespace AllIsFair.Models
             var game = _db.Games.FirstOrDefault(x => x.User.Id == currentUserId) ?? CreateNewGame();
 
             _currentGameId = game.Id;
-
-            TurnManager = new TurnManager(_db);
         }
 
-        public TurnManager TurnManager { get; set; }
 
         public Combatant CurrentPlayer
         {
-            get { return _db.Games.Find(_currentGameId).Combatants.FirstOrDefault(x => x.IsPlayer); }
+            get { return _db.Games.Find(_currentGameId).Combatants.FirstOrDefault(); }
         }
 
         public Game CurrentGame => _db.Games.Find(_currentGameId);
@@ -109,7 +107,7 @@ namespace AllIsFair.Models
                 IsWeapon = true,
                 WeaponRange = 1,
                 ThreatBonus = 1,
-               
+
 
             };
             var emptyCard = new Item { Combatant = player, GraphicName = "unknowncard.png", Name = "???" };
@@ -153,7 +151,7 @@ namespace AllIsFair.Models
             if (to.Combatant != null && to.Combatant != attacker)
             {
                 //attack logic
-                 TryAttack(attacker, attacker.Tile, to);
+                TryAttack(attacker, attacker.Tile, to);
                 _db.SaveChanges();
                 return EventType.None;
 
@@ -172,9 +170,6 @@ namespace AllIsFair.Models
             var defender = @to.Combatant;
             var weapon = attacker.Items.FirstOrDefault(x => x.IsWeapon);
 
-            TurnManager.IsPlayerAction = attacker.IsPlayer;
-
-           
             var range = 1.5;
 
             if (weapon != null)
@@ -187,20 +182,28 @@ namespace AllIsFair.Models
                 return false;
             }
 
-
             var attackerRoll = GameHelpers.RollDie(attacker.Threat);
             var defenderRoll = GameHelpers.RollDie(defender.Survivability);
-
-            TurnManager.DieResult = attackerRoll;
-            TurnManager.DieResultEnemy = defenderRoll;
-            TurnManager.DieResultGraphics = GetDieGraphics(attackerRoll);
-            TurnManager.DieResultEnemyGraphics = GetDieGraphics(defenderRoll);
+            var healthloss = 0;
 
             if (attackerRoll.Sum() > defenderRoll.Sum())
             {
-                defender.Health -= attackerRoll.Sum() - defenderRoll.Sum();
-                TurnManager.Healthloss = defender.Health;
+                healthloss = attackerRoll.Sum() - defenderRoll.Sum();
+                defender.Health -= healthloss;
             }
+
+            attacker.Results.Add(new Result()
+            {
+                TurnNumber = CurrentGame.CurrentTurnNumber,
+                Rolls = attackerRoll
+            });
+
+            defender.Results.Add(new Result()
+            {
+                Healthloss = healthloss,
+                TurnNumber = CurrentGame.CurrentTurnNumber,
+                Rolls = defenderRoll
+            });
 
             RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.");
             _db.SaveChanges();
@@ -214,7 +217,6 @@ namespace AllIsFair.Models
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
             CurrentGame.Events.Remove(eventCard);
             CurrentGame.Events.Add(eventCard);
-            TurnManager.Event = eventCard;
 
             var numOfDice = 0;
             switch (eventCard.RequiredStat)
@@ -244,9 +246,7 @@ namespace AllIsFair.Models
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
 
             var flip = failedRoll ? -1 : 1;
-
-            TurnManager.DieResult = dieResults;
-            TurnManager.DieResultGraphics = GetDieGraphics(dieResults);
+            var statReward = eventCard.StatReward*flip;
 
             switch (eventCard.RequiredStat)
             {
@@ -265,7 +265,6 @@ namespace AllIsFair.Models
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
 
             if (!failedRoll && eventCard.ItemReward != null)
             {
@@ -292,6 +291,14 @@ namespace AllIsFair.Models
                 }
             }
 
+            player.Results.Add(new Result()
+            {
+                TurnNumber = CurrentGame.CurrentTurnNumber,
+                Event = eventCard,
+                Rolls = dieResults,
+                StatReward = statReward
+            });
+
             //TODO Record draw event card.
             RecordAction(Action.DrawEventCard, "TODO", player);
 
@@ -299,7 +306,7 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-     
+
 
         public List<string> GetDieGraphics(IEnumerable<int> dieResult)
         {
@@ -308,6 +315,54 @@ namespace AllIsFair.Models
             graphicList.AddRange(dieResult.Select(result => $"/Graphics/die{result}.png"));
 
             return graphicList;
+        }
+
+        public ResultVM GetResult()
+        {
+            var result = new ResultVM();
+
+            var playerResults = CurrentGame.Results.FirstOrDefault(x => x.TurnNumber == CurrentGame.CurrentTurnNumber && x.Combatant == CurrentPlayer);
+            var enemyResults = CurrentGame.Results.FirstOrDefault(x => x.TurnNumber == CurrentGame.CurrentTurnNumber && x.Combatant != CurrentPlayer);
+
+            if (playerResults != null)
+            {
+                result.TurnNumber = CurrentGame.CurrentTurnNumber;
+                result.Event = new EventVM()
+                {
+                    Name = playerResults.Event.Name,
+                    GraphicName = playerResults.Event.GraphicName,
+                    RequiredStat = playerResults.Event.RequiredStat,
+                    TargetNumber = playerResults.Event.TargetNumber,
+                    Type = playerResults.Event.Type,
+                    StatReward = playerResults.Event.StatReward,
+                    Description = playerResults.Event.Description
+                };
+
+                result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
+               
+                result.Rolls = playerResults.Rolls.ToList();
+                result.DieResultGraphics = GetDieGraphics(result.Rolls);
+                result.StatReward = playerResults.StatReward;
+            }
+
+            if (enemyResults != null)
+            {
+                result.EnemyRolls = enemyResults.Rolls.ToList();
+                result.DieResultEnemyGraphics = GetDieGraphics(result.EnemyRolls);
+                result.Healthloss = enemyResults.Healthloss;
+            }
+
+            return result;
+        }
+
+        public void ChangePlayer()
+        {
+            var player = CurrentPlayer;
+
+            CurrentGame.Combatants.Remove(player);
+            CurrentGame.Combatants.Add(player);
+
+            _db.SaveChanges();
         }
     }
 }

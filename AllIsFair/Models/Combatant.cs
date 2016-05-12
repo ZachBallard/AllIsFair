@@ -37,7 +37,7 @@ namespace AllIsFair.Models
 
         public virtual ICollection<Item> Items { get; set; } = new List<Item>();
         public virtual ICollection<GameAction> GameActions { get; set; } = new List<GameAction>();
-
+        public virtual ICollection<Result> Results { get; set; } = new List<Result>();
 
         public virtual Combatant Killer { get; set; }
         public string GraphicName { get; set; }

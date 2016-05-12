@@ -61,41 +61,22 @@ namespace AllIsFair.Controllers
                 Threat = mgr.CurrentPlayer.Threat.ToString(),
                 Survivability = mgr.CurrentPlayer.Survivability.ToString(),
                 Items = mgr.CurrentPlayer.Items.Where(i => !i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
-                Weapons = mgr.CurrentPlayer.Items.Where(i=> i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
+                Weapons = mgr.CurrentPlayer.Items.Where(i => i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
                 GraphicName = mgr.CurrentPlayer.GraphicName
             };
 
-            model.IsPlayerAction = mgr.TurnManager.IsPlayerAction;
-            model.DieResult = mgr.TurnManager.DieResult;
-            model.DieResultEnemy = mgr.TurnManager.DieResultEnemy;
-            model.DieResultGraphics = mgr.GetDieGraphics(model.DieResult);
-            model.DieResultEnemyGraphics = mgr.GetDieGraphics(model.DieResultEnemy);
+            model.Result = mgr.GetResult();
 
-            if (mgr.TurnManager.Event != null)
+            model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(10).Select(x => new GameActionVM()
             {
-                model.Event = new EventVM()
-                {
-                    GraphicName = mgr.TurnManager.Event.GraphicName,
-                    Name = mgr.TurnManager.Event.Name,
-                    Description = mgr.TurnManager.Event.Description,
-                    RequiredStat = mgr.TurnManager.Event.RequiredStat,
-                    StatReward = mgr.TurnManager.Event.StatReward,
-                    TargetNumber = mgr.TurnManager.Event.TargetNumber,
-                    Type = mgr.TurnManager.Event.Type
-                };
-
-                model.Reward = new ItemVM(mgr.TurnManager.Event.ItemReward);
-            }
-            model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(10).Select(x=> new GameActionVM()
-            {
-               Id = x.Id,
-               Action = x.Action.ToString(),
-               Date =  x.Date.ToString(),
-               Message = x.Message,
-               PlayerName = x.Combatant?.Name
+                Id = x.Id,
+                Action = x.Action.ToString(),
+                Date = x.Date.ToString(),
+                Message = x.Message,
+                PlayerName = x.Combatant?.Name
             }).ToList();
 
-            mgr.TurnManager.RemoveResults();
+            mgr.ChangePlayer();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -110,7 +91,7 @@ namespace AllIsFair.Controllers
         public ActionResult TryMove(int x2, int y2)
         {
             var eventType = mgr.PlayerMove(x2, y2, mgr.CurrentPlayer);
-            
+
             var result = new { eventType, Message = "message" };
             return Json(result);
         }
