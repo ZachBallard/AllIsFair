@@ -97,6 +97,8 @@ namespace AllIsFair.Models
         public int Healthloss { get; set; }
         public int StatReward { get; set; }
 
+        public bool IsAttack { get; set; }
+
         public List<int> Rolls { get; set; } = new List<int>();
         public List<int> EnemyRolls { get; set; } = new List<int>();
         public List<string> DieResultGraphics { get; set; } = new List<string>();

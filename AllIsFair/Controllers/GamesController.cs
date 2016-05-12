@@ -36,7 +36,6 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count()
             };
 
-            // model.GameActions = mgr.CurrentGame.GameActions.ToList();
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
             model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
@@ -100,7 +99,6 @@ namespace AllIsFair.Controllers
         [HttpPost]
         public ActionResult DrawEvent(EventType type)
         {
-
             mgr.DrawEventCard(mgr.CurrentPlayer, type);
 
             var result = new { Message = "message" };

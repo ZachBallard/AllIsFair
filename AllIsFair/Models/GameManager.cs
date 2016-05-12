@@ -21,10 +21,7 @@ namespace AllIsFair.Models
         }
 
 
-        public Combatant CurrentPlayer
-        {
-            get { return _db.Games.Find(_currentGameId).Combatants.FirstOrDefault(); }
-        }
+        public Combatant CurrentPlayer => _db.Games.Find(_currentGameId).Combatants.FirstOrDefault();
 
         public Game CurrentGame => _db.Games.Find(_currentGameId);
 
@@ -330,7 +327,7 @@ namespace AllIsFair.Models
                 result.Event = new EventVM()
                 {
                     Name = playerResults.Event.Name,
-                    GraphicName = playerResults.Event.GraphicName,
+                    GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
                     RequiredStat = playerResults.Event.RequiredStat,
                     TargetNumber = playerResults.Event.TargetNumber,
                     Type = playerResults.Event.Type,
@@ -347,6 +344,7 @@ namespace AllIsFair.Models
 
             if (enemyResults != null)
             {
+                result.IsAttack = true;
                 result.EnemyRolls = enemyResults.Rolls.ToList();
                 result.DieResultEnemyGraphics = GetDieGraphics(result.EnemyRolls);
                 result.Healthloss = enemyResults.Healthloss;
@@ -359,8 +357,9 @@ namespace AllIsFair.Models
         {
             var player = CurrentPlayer;
 
-            CurrentGame.Combatants.Remove(player);
-            CurrentGame.Combatants.Add(player);
+            _db.Games.Find(_currentGameId).CurrentTurnNumber++;
+            _db.Games.Find(_currentGameId).Combatants.Remove(player);
+            _db.Games.Find(_currentGameId).Combatants.Add(player);
 
             _db.SaveChanges();
         }
