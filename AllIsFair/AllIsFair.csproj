@@ -180,6 +180,14 @@
     <Compile Include="Migrations\201605111910048_GameActionsRequiredGame.Designer.cs">
       <DependentUpon>201605111910048_GameActionsRequiredGame.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605112117518_turnmanagergame.cs" />
+    <Compile Include="Migrations\201605112117518_turnmanagergame.Designer.cs">
+      <DependentUpon>201605112117518_turnmanagergame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605120009513_turnmanager.cs" />
+    <Compile Include="Migrations\201605120009513_turnmanager.Designer.cs">
+      <DependentUpon>201605120009513_turnmanager.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\GameAction.cs" />
     <Compile Include="Models\GameHelpers.cs" />
     <Compile Include="Models\GameManager.cs" />
@@ -194,7 +202,6 @@
     <Compile Include="Models\GameInfo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\TurnManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -296,6 +303,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605111910048_GameActionsRequiredGame.resx">
       <DependentUpon>201605111910048_GameActionsRequiredGame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605112117518_turnmanagergame.resx">
+      <DependentUpon>201605112117518_turnmanagergame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605120009513_turnmanager.resx">
+      <DependentUpon>201605120009513_turnmanager.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

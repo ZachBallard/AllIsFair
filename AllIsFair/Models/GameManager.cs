@@ -12,14 +12,6 @@ namespace AllIsFair.Models
         private readonly int _currentGameId;
         private readonly string _currentUserId;
 
-        private bool IsPlayerAction { get; set; } // determine who is on defending if attack
-
-        public List<int> DieResult { get; set; } = new List<int>();
-        public List<string> DieResultGraphics { get; set; } = new List<string>();
-        public List<int> DieResultEnemy { get; set; } = new List<int>(); // if empty event was drawn else attack
-        public List<string> DieResultEnemyGraphics { get; set; } = new List<string>(); 
-        public Event Event { get; set; }
-        public int Healthloss { get; set; }
 
         public GameManager(string currentUserId, ApplicationDbContext dbContext)
         {
@@ -49,6 +41,7 @@ namespace AllIsFair.Models
                 Combatants = GenerateCombatants(1)
             };
 
+            game.TurnManager = new TurnManager();
             game.Tiles.ForEach(x => x.Game = game);
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
@@ -184,7 +177,7 @@ namespace AllIsFair.Models
             var defender = @to.Combatant;
             var weapon = attacker.Items.FirstOrDefault(x => x.IsWeapon);
 
-            IsPlayerAction = attacker.IsPlayer;
+            CurrentGame.TurnManager.IsPlayerAction = attacker.IsPlayer;
 
             var didAttack = false;
             var range = 1.5;
@@ -199,13 +192,15 @@ namespace AllIsFair.Models
                 didAttack = true;
                 var attackerRoll = GameHelpers.RollDie(attacker.Threat);
                 var defenderRoll = GameHelpers.RollDie(defender.Survivability);
-                DieResult = attackerRoll;
-                DieResultEnemy = defenderRoll;
+                CurrentGame.TurnManager.DieResult = attackerRoll;
+                CurrentGame.TurnManager.DieResultEnemy = defenderRoll;
+                CurrentGame.TurnManager.DieResultGraphics = GetDieGraphics(attackerRoll);
+                CurrentGame.TurnManager.DieResultEnemyGraphics = GetDieGraphics(defenderRoll);
 
                 if (attackerRoll.Sum() > defenderRoll.Sum())
                 {
                     defender.Health -= attackerRoll.Sum() - defenderRoll.Sum();
-                    Healthloss = defender.Health;
+                    CurrentGame.TurnManager.Healthloss = defender.Health;
                 }
             }
 
@@ -218,7 +213,7 @@ namespace AllIsFair.Models
             var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
             CurrentGame.Events.Remove(eventCard);
             CurrentGame.Events.Add(eventCard);
-            Event = eventCard;
+            CurrentGame.TurnManager.Event = eventCard;
 
             var numOfDice = 0;
             switch (eventCard.RequiredStat)
@@ -248,6 +243,9 @@ namespace AllIsFair.Models
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
 
             var flip = failedRoll ? -1 : 1;
+
+            CurrentGame.TurnManager.DieResult = dieResults;
+            CurrentGame.TurnManager.DieResultGraphics = GetDieGraphics(dieResults);
 
             switch (eventCard.RequiredStat)
             {
@@ -302,11 +300,11 @@ namespace AllIsFair.Models
 
         public void RemoveResults()
         {
-            IsPlayerAction = false;
-            DieResult = new List<int>();
-            DieResultEnemy = new List<int>();
-            Event = new Event();
-            Healthloss = 0;
+            CurrentGame.TurnManager.IsPlayerAction = false;
+            CurrentGame.TurnManager.DieResult = new List<int>();
+            CurrentGame.TurnManager.DieResultEnemy = new List<int>();
+            CurrentGame.TurnManager.Event = new Event();
+            CurrentGame.TurnManager.Healthloss = 0;
         }
 
         public List<string> GetDieGraphics(List<int> dieResult)

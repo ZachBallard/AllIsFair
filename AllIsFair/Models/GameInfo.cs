@@ -12,9 +12,8 @@ namespace AllIsFair.Models
         public int NumOfDead { get; set; }
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
         public PlayerVM Player { get; set; } = new PlayerVM();
-        // public IEnumerable<Combatant> Combatants { get; set; } = new List<Combatant>();
-        //public List<GameAction> GameActions { get; set; } = new List<GameAction>();
 
+        public bool IsPlayerAction { get; set; }
         public List<int> DieResult { get; set; } = new List<int>();
         public List<int> DieResultEnemy { get; set; } = new List<int>();
         public List<string> DieResultGraphics { get; set; } = new List<string>();

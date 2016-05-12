@@ -32,7 +32,6 @@
                 console.log(res.data);
                 refreshGameState();
             });
-
         }
 
         //function DrawCard(type) {

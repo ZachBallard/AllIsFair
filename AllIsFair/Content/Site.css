@@ -86,7 +86,13 @@ h6 {
     z-index: 1;
     border: solid lightsalmon 1px;
 }
-
+.messagebox {
+    width: 100%;
+    font-size: 20px;
+    font-family: Comic Sans MS, cursive, sans-serif;
+    color: white;
+    text-shadow: 1px 1px darkred;
+}
 .card {
     border: solid 1px darkred;
     text-align: center;

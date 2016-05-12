@@ -38,6 +38,8 @@ namespace AllIsFair.Models
         public int CombatantTurn { get; set; }
 
         public Event Event { get; set; }
+
+        public TurnManager TurnManager { get; set; }
     }
 
     public class Combatant
@@ -153,6 +155,28 @@ namespace AllIsFair.Models
         public int StatReward { get; set; }
         public Item ItemReward { get; set; }
         public string Description { get; set; }
+
+        [Required]
+        public virtual Game Game { get; set; }
+    }
+
+    public class TurnManager
+    {
+        public int Id { get; set; }
+
+        public List<Combatant> TurnOrder { get; set; }
+
+        [NotMapped]
+        public Combatant CurrentTurn => TurnOrder.First();
+
+        public bool IsPlayerAction { get; set; } // determine who is on defending if attack
+
+        public List<int> DieResult { get; set; } = new List<int>();
+        public List<string> DieResultGraphics { get; set; } = new List<string>();
+        public List<int> DieResultEnemy { get; set; } = new List<int>(); // if empty event was drawn else attack
+        public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
+        public Event Event { get; set; }
+        public int Healthloss { get; set; }
 
         [Required]
         public virtual Game Game { get; set; }
