@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Web.Services.Description;
+using Microsoft.Ajax.Utilities;
 using WebGrease.Css.Extensions;
 
 namespace AllIsFair.Models
@@ -21,7 +23,7 @@ namespace AllIsFair.Models
         }
 
 
-        public Combatant CurrentPlayer => _db.Games.Find(_currentGameId).Combatants.FirstOrDefault();
+        public Combatant CurrentPlayer => _db.Games.Find(_currentGameId).Combatants.FirstOrDefault(x => x.TurnOrder == CurrentGame.CurrentTurnOrder);
 
         public Game CurrentGame => _db.Games.Find(_currentGameId);
 
@@ -38,6 +40,10 @@ namespace AllIsFair.Models
             };
 
             game.Tiles.ForEach(x => x.Game = game);
+            game.CurrentTurnNumber = 1;
+            game.CurrentTurnOrder = 1;
+            //need to finish events seeding
+            game.Events = GetEvents();
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
             var enemyStartingTile = game.Tiles.First(x => x.X == 2 && x.Y == 2);
@@ -49,6 +55,12 @@ namespace AllIsFair.Models
             _db.SaveChanges();
 
             return game;
+        }
+
+        private ICollection<Event> GetEvents()
+        {
+            return new List<Event>();
+
         }
 
         public void DeleteGame()
@@ -66,17 +78,42 @@ namespace AllIsFair.Models
         {
             var map = new List<Tile>();
 
+
             for (var i = 1; i <= x; i++)
             {
                 for (var j = 1; j <= y; j++)
                 {
-                    var file = "Plains.png";
+                    Random random = new Random();
+                    var file = "";
+                    var eventType = EventType.Expanse;
+
+                    switch (random.Next(1, 5))
+                    {
+                        case 1:
+                            file = "Plains.png";
+                            eventType = EventType.Expanse;
+                            break;
+                        case 2:
+                            file = "Forest.png";
+                            eventType = EventType.Wilderness;
+                            break;
+                        case 3:
+                            file = "Mountain.png";
+                            eventType = EventType.Mountain;
+                            break;
+                        case 4:
+                            file = "Town.png";
+                            eventType = EventType.City;
+                            break;
+                    }
+
                     if (i == 1 || i == 12 || j == 1 || j == 12)
                     {
                         file = "Beach.png";
+                        eventType = EventType.Expanse;
                     }
 
-                    map.Add(new Tile { GraphicName = file, X = i, Y = j });
+                    map.Add(new Tile { GraphicName = file, X = i, Y = j, Type = eventType });
                 }
             }
 
@@ -104,9 +141,8 @@ namespace AllIsFair.Models
                 IsWeapon = true,
                 WeaponRange = 1,
                 ThreatBonus = 1,
-
-
             };
+
             var emptyCard = new Item { Combatant = player, GraphicName = "unknowncard.png", Name = "???" };
             player.Items.Add(knife);
             player.Items.Add(emptyCard);
@@ -140,17 +176,16 @@ namespace AllIsFair.Models
         {
             var to = CurrentGame.Tiles.GetTile(newX, newY);
 
-            if (!attacker.CanMove(to))
-            {
-                return EventType.None;
-            }
-
             if (to.Combatant != null && to.Combatant != attacker)
             {
                 //attack logic
-                TryAttack(attacker, attacker.Tile, to);
+                var didAttack = TryAttack(attacker, attacker.Tile, to);
                 _db.SaveChanges();
-                return EventType.None;
+
+                if (didAttack)
+                {
+                    return EventType.None;
+                }
 
             }
 
@@ -243,7 +278,7 @@ namespace AllIsFair.Models
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
 
             var flip = failedRoll ? -1 : 1;
-            var statReward = eventCard.StatReward*flip;
+            var statReward = eventCard.StatReward * flip;
 
             switch (eventCard.RequiredStat)
             {
@@ -336,7 +371,7 @@ namespace AllIsFair.Models
                 };
 
                 result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
-               
+
                 result.Rolls = playerResults.Rolls.ToList();
                 result.DieResultGraphics = GetDieGraphics(result.Rolls);
                 result.StatReward = playerResults.StatReward;
@@ -355,11 +390,15 @@ namespace AllIsFair.Models
 
         public void ChangePlayer()
         {
-            var player = CurrentPlayer;
-
-            _db.Games.Find(_currentGameId).CurrentTurnNumber++;
-            _db.Games.Find(_currentGameId).Combatants.Remove(player);
-            _db.Games.Find(_currentGameId).Combatants.Add(player);
+            if (CurrentPlayer.TurnOrder == CurrentGame.Combatants.Count)
+            {
+                _db.Games.Find(_currentGameId).CurrentTurnNumber++;
+                _db.Games.Find(_currentGameId).CurrentTurnOrder = 1;
+            }
+            else
+            {
+                _db.Games.Find(_currentGameId).CurrentTurnOrder++;
+            }
 
             _db.SaveChanges();
         }

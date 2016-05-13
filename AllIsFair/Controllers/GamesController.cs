@@ -33,7 +33,7 @@ namespace AllIsFair.Controllers
             var model = new GameVM
             {
                 NumOfAlive = mgr.CurrentGame.Combatants.Count(),
-                NumOfDead = mgr.CurrentGame.Combatants.Count()
+                NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
@@ -43,7 +43,7 @@ namespace AllIsFair.Controllers
                 Id = x.Id,
                 X = x.X,
                 Y = x.Y,
-                Type = (EventType)x.Type,
+                Type = x.Type,
                 GraphicName = "/Graphics/" + x.GraphicName,
                 CombatantGraphicName = x.Combatant == null ? "" : "/Graphics/" + x.Combatant.GraphicName,
                 IsPossibleMove = moves.Any(t => t.Id == x.Id)
@@ -75,7 +75,10 @@ namespace AllIsFair.Controllers
                 PlayerName = x.Combatant?.Name
             }).ToList();
 
-            mgr.ChangePlayer();
+            if (model.Result != null)
+            {
+                mgr.ChangePlayer();
+            }
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -90,6 +93,11 @@ namespace AllIsFair.Controllers
         public ActionResult TryMove(int x2, int y2)
         {
             var eventType = mgr.PlayerMove(x2, y2, mgr.CurrentPlayer);
+
+            if (eventType != EventType.None)
+            {
+                DrawEvent(eventType);
+            }
 
             var result = new { eventType, Message = "message" };
             return Json(result);
