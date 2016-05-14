@@ -60,7 +60,7 @@ h6 {
 }
 
 .map {
-    height: 60%;
+    height: 40%;
     background-image: url("http://img15.deviantart.net/e173/i/2011/250/4/c/old_paper_stock_03_by_ftourini-d495tan.png");
     padding: 70px 60px;
     background-repeat: no-repeat;
@@ -84,7 +84,7 @@ h6 {
     position: relative;
     width: 100%;
     z-index: 1;
-    border: solid lightsalmon 1px;
+    border: solid tan 1px;
 }
 .messagebox {
     width: 100%;
@@ -117,7 +117,7 @@ h6 {
 }
 
     .possibleMove img:hover {
-        border: solid darkred 3px;
+        border: solid whitesmoke 3px;
     }
 
 .bottombar {

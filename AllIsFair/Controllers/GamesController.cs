@@ -36,7 +36,7 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
-            if (model.Result != null)
+            if (model.Result.TurnNumber == 0)
             {
                 mgr.ChangePlayer();
             }
@@ -68,6 +68,16 @@ namespace AllIsFair.Controllers
                 Weapons = mgr.CurrentPlayer.Items.Where(i => i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
                 GraphicName = mgr.CurrentPlayer.GraphicName
             };
+
+            foreach (var item in model.Player.Items.Where(item => item.DoesCount))
+            {
+                item.Counter--;
+
+                if (item.Counter <= 0)
+                {
+                    model.Player.Items.Remove(item);
+                }
+            }
 
             model.Result = mgr.GetResult();
 
