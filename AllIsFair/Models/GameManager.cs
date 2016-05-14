@@ -78,16 +78,18 @@ namespace AllIsFair.Models
         {
             var map = new List<Tile>();
 
+            Random random1 = new Random();
+            Random random2 = new Random((int)DateTime.Now.Ticks + random1.Next(0,500));
 
             for (var i = 1; i <= x; i++)
             {
                 for (var j = 1; j <= y; j++)
                 {
-                    Random random = new Random();
+                    
                     var file = "";
                     var eventType = EventType.Expanse;
 
-                    switch (random.Next(1, 5))
+                    switch (random2.Next(1, 5))
                     {
                         case 1:
                             file = "Plains.png";
@@ -371,19 +373,17 @@ namespace AllIsFair.Models
                 };
 
                 result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
-
                 result.Rolls = playerResults.Rolls.ToList();
                 result.DieResultGraphics = GetDieGraphics(result.Rolls);
                 result.StatReward = playerResults.StatReward;
             }
 
-            if (enemyResults != null)
-            {
-                result.IsAttack = true;
-                result.EnemyRolls = enemyResults.Rolls.ToList();
-                result.DieResultEnemyGraphics = GetDieGraphics(result.EnemyRolls);
-                result.Healthloss = enemyResults.Healthloss;
-            }
+            if (enemyResults == null) return result;
+
+            result.IsAttack = true;
+            result.EnemyRolls = enemyResults.Rolls.ToList();
+            result.DieResultEnemyGraphics = GetDieGraphics(result.EnemyRolls);
+            result.Healthloss = enemyResults.Healthloss;
 
             return result;
         }

@@ -31,12 +31,6 @@ namespace AllIsFair.Models
             return distance < c.Speed + 0.5;
         }
 
-        public static bool CanAttack(this Combatant attacker, Combatant defender)
-        {
-            //attack logic
-            return true;
-        }
-
         public static Tile GetTile(this IEnumerable<Tile> tiles, int x, int y)
         {
             return tiles.FirstOrDefault(t => t.X == x && t.Y == y);

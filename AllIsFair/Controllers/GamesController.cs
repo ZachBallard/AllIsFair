@@ -36,6 +36,11 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
+            if (model.Result != null)
+            {
+                mgr.ChangePlayer();
+            }
+
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
             model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
@@ -74,11 +79,6 @@ namespace AllIsFair.Controllers
                 Message = x.Message,
                 PlayerName = x.Combatant?.Name
             }).ToList();
-
-            if (model.Result != null)
-            {
-                mgr.ChangePlayer();
-            }
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
