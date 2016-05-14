@@ -231,6 +231,13 @@
     <Content Include="Graphics\allisfairlogo.png" />
     <Content Include="Graphics\bagofjunk.png" />
     <Content Include="Graphics\Beach.png" />
+    <Content Include="Graphics\Beach2.png" />
+    <Content Include="Graphics\Beach3.png" />
+    <Content Include="Graphics\Beach4.png" />
+    <Content Include="Graphics\Beach5.png" />
+    <Content Include="Graphics\Beach6.png" />
+    <Content Include="Graphics\Beach7.png" />
+    <Content Include="Graphics\Beach8.png" />
     <Content Include="Graphics\bloodtile.png" />
     <Content Include="Graphics\cliffhanger.png" />
     <Content Include="Graphics\die1.png" />

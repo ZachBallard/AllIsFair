@@ -43,7 +43,7 @@ namespace AllIsFair.Models
             game.CurrentTurnNumber = 1;
             game.CurrentTurnOrder = 1;
 
-           // game.Events = GetEvents();
+            // game.Events = GetEvents();
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
             var enemyStartingTile = game.Tiles.First(x => x.X == 2 && x.Y == 2);
@@ -68,7 +68,7 @@ namespace AllIsFair.Models
                 TargetNumber = 8,
                 RequiredStat = Stat.Strength,
                 StatReward = 0,
-                ItemReward = new Item() {IsWeapon = false, Name = "Medical Kit", DoesCount = true, Counter = 3, SurvivalBonus = 3, GraphicName = "medkit.png"},
+                ItemReward = new Item() { IsWeapon = false, Name = "Medical Kit", DoesCount = true, Counter = 3, SurvivalBonus = 3, GraphicName = "medkit.png" },
                 GraphicName = "suspiciousshed.png",
                 Type = EventType.City
             });
@@ -123,7 +123,7 @@ namespace AllIsFair.Models
                 Name = "Mad Mother",
                 TargetNumber = 12,
                 RequiredStat = Stat.Speed,
-                ItemReward = new Item() { IsWeapon = false, Name = "Adrenaline!", DoesCount = true, Counter = 2, SurvivalBonus = 2, GraphicName = "adrenaline.png"},
+                ItemReward = new Item() { IsWeapon = false, Name = "Adrenaline!", DoesCount = true, Counter = 2, SurvivalBonus = 2, GraphicName = "adrenaline.png" },
                 GraphicName = "madmother.png",
                 Type = EventType.Wilderness
             });
@@ -213,13 +213,13 @@ namespace AllIsFair.Models
             var map = new List<Tile>();
 
             Random random1 = new Random();
-            Random random2 = new Random((int)DateTime.Now.Ticks + random1.Next(0,500));
+            Random random2 = new Random((int)DateTime.Now.Ticks + random1.Next(0, 500));
 
             for (var i = 1; i <= x; i++)
             {
                 for (var j = 1; j <= y; j++)
                 {
-                    
+
                     var file = "";
                     var eventType = EventType.Expanse;
 
@@ -243,9 +243,44 @@ namespace AllIsFair.Models
                             break;
                     }
 
-                    if (i == 1 || i == 12 || j == 1 || j == 12)
+                    if (i == 1 && j == 1)
+                    {
+                        file = "Beach3.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i == 1 && j > 1 && j < 12)
+                    {
+                        file = "Beach7.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i == 12 && j < 12 && j > 1)
+                    {
+                        file = "Beach8.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i == 1 && j == 12)
+                    {
+                        file = "Beach5.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i == 12 && j == 1)
+                    {
+                        file = "Beach4.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i == 12 && j == 12)
+                    {
+                        file = "Beach6.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i < 12 && i > 1 && j == 1)
                     {
                         file = "Beach.png";
+                        eventType = EventType.Expanse;
+                    }
+                    if (i < 12 && i > 1 && j == 12)
+                    {
+                        file = "Beach2.png";
                         eventType = EventType.Expanse;
                     }
 
@@ -260,7 +295,7 @@ namespace AllIsFair.Models
         {
             var combatants = new List<Combatant>();
 
-            var player = new Combatant("Player", true)
+            var player = new Combatant("Player 1", true)
             {
                 Strength = 4,
                 Speed = 2,
@@ -285,7 +320,7 @@ namespace AllIsFair.Models
 
             for (var i = 0; i < num; i++)
             {
-                var enemy = new Combatant("Enemy " + i, false)
+                var enemy = new Combatant("Player " + (i + 2), false)
                 {
                     Strength = 4,
                     Speed = 2,
