@@ -24,7 +24,5 @@ namespace AllIsFair.Models
         public Item ItemReward { get; set; }
         public string Description { get; set; }
 
-        [Required]
-        public virtual Game Game { get; set; }
     }
 }

@@ -79,7 +79,7 @@ namespace AllIsFair.Controllers
                 }
             }
 
-            model.Result = mgr.GetResult();
+            model.Result = GetResult();
 
             model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(10).Select(x => new GameActionVM()
             {
@@ -130,5 +130,46 @@ namespace AllIsFair.Controllers
             var result = new { Message = "Game Deleted" };
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+
+        public ResultVM GetResult()
+        {
+            var result = new ResultVM();
+            result.TurnNumber = mgr.CurrentGame.CurrentTurnNumber;
+
+            var playerResults = mgr.CurrentPlayer.Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
+            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x=>!x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
+
+            if (playerResults != null)
+            {
+                
+                result.Event = new EventVM()
+                {
+                    Name = playerResults.Event.Name,
+                    GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
+                    RequiredStat = playerResults.Event.RequiredStat,
+                    TargetNumber = playerResults.Event.TargetNumber,
+                    Type = playerResults.Event.Type,
+                    StatReward = playerResults.Event.StatReward,
+                    Description = playerResults.Event.Description
+                };
+
+                if (playerResults.Event.ItemReward != null)
+                    result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
+                result.Rolls = playerResults.Rolls.ToList();
+                result.DieResultGraphics = result.Rolls.GetDieGraphics();
+                result.StatReward = playerResults.StatReward;
+            }
+
+            if (enemyResults == null) return result;
+
+            result.IsAttack = true;
+            result.EnemyRolls = enemyResults.Rolls.ToList();
+            result.DieResultEnemyGraphics = result.Rolls.GetDieGraphics();
+            result.Healthloss = enemyResults.Healthloss;
+
+            return result;
+        }
+
     }
 }

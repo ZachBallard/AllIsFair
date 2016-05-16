@@ -52,6 +52,15 @@ namespace AllIsFair.Models
             }
 
             return possibleMoves;
-        } 
+        }
+
+        public static List<string> GetDieGraphics(this IEnumerable<int> dieResult)
+        {
+            var graphicList = new List<string>();
+
+            graphicList.AddRange(dieResult.Select(result => $"/Graphics/die{result}.png"));
+
+            return graphicList;
+        }
     }
 }

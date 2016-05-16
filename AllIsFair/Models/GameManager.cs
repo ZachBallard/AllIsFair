@@ -249,8 +249,6 @@ namespace AllIsFair.Models
                 }
             };
 
-            eventList.ForEach(e => e.Game = game);
-
             return eventList;
         }
 
@@ -258,6 +256,16 @@ namespace AllIsFair.Models
         {
             //Delete all stuff
             var game = _db.Games.Find(_currentGameId);
+
+            foreach (var c in game.Combatants)
+            {
+                c.Items.Clear();
+                c.Results.Clear();
+                c.GameActions.Clear();
+            }
+
+            game.Events.Clear();
+
             if (game != null)
             {
                 _db.Games.Remove(game);
@@ -452,14 +460,14 @@ namespace AllIsFair.Models
             attacker.Results.Add(new Result()
             {
                 TurnNumber = CurrentGame.CurrentTurnNumber,
-                Rolls = attackerRoll
+                Rolls = attackerRoll,
             });
 
             defender.Results.Add(new Result()
             {
                 Healthloss = healthloss,
                 TurnNumber = CurrentGame.CurrentTurnNumber,
-                Rolls = defenderRoll
+                Rolls = defenderRoll,
             });
 
             RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.");
@@ -560,53 +568,7 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-
-
-        public List<string> GetDieGraphics(IEnumerable<int> dieResult)
-        {
-            var graphicList = new List<string>();
-
-            graphicList.AddRange(dieResult.Select(result => $"/Graphics/die{result}.png"));
-
-            return graphicList;
-        }
-
-        public ResultVM GetResult()
-        {
-            var result = new ResultVM();
-
-            var playerResults = CurrentGame.Results.FirstOrDefault(x => x.TurnNumber == CurrentGame.CurrentTurnNumber && x.Combatant == CurrentPlayer);
-            var enemyResults = CurrentGame.Results.FirstOrDefault(x => x.TurnNumber == CurrentGame.CurrentTurnNumber && x.Combatant != CurrentPlayer);
-
-            if (playerResults != null)
-            {
-                result.TurnNumber = CurrentGame.CurrentTurnNumber;
-                result.Event = new EventVM()
-                {
-                    Name = playerResults.Event.Name,
-                    GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
-                    RequiredStat = playerResults.Event.RequiredStat,
-                    TargetNumber = playerResults.Event.TargetNumber,
-                    Type = playerResults.Event.Type,
-                    StatReward = playerResults.Event.StatReward,
-                    Description = playerResults.Event.Description
-                };
-
-                result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
-                result.Rolls = playerResults.Rolls.ToList();
-                result.DieResultGraphics = GetDieGraphics(result.Rolls);
-                result.StatReward = playerResults.StatReward;
-            }
-
-            if (enemyResults == null) return result;
-
-            result.IsAttack = true;
-            result.EnemyRolls = enemyResults.Rolls.ToList();
-            result.DieResultEnemyGraphics = GetDieGraphics(result.EnemyRolls);
-            result.Healthloss = enemyResults.Healthloss;
-
-            return result;
-        }
+       
 
         public void ChangePlayer()
         {

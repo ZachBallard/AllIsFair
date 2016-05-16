@@ -200,6 +200,10 @@
     <Compile Include="Migrations\201605161612014_noreqcombatantonitem.Designer.cs">
       <DependentUpon>201605161612014_noreqcombatantonitem.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605161640389_RemovedGameReq.cs" />
+    <Compile Include="Migrations\201605161640389_RemovedGameReq.Designer.cs">
+      <DependentUpon>201605161640389_RemovedGameReq.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Combatant.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\Game.cs" />
@@ -359,6 +363,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605161612014_noreqcombatantonitem.resx">
       <DependentUpon>201605161612014_noreqcombatantonitem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605161640389_RemovedGameReq.resx">
+      <DependentUpon>201605161640389_RemovedGameReq.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
