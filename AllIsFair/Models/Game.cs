@@ -24,6 +24,8 @@ namespace AllIsFair.Models
         public int Healthloss { get; set; }
         public int StatReward { get; set; }
 
+        public bool IsAttack { get; set; }
+
         public virtual ICollection<int> Rolls { get; set; } = new List<int>();
         public virtual Event Event { get; set; }
         public virtual Combatant Combatant { get; set; }

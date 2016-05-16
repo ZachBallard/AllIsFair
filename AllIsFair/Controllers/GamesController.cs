@@ -36,9 +36,9 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
-            mgr.ChangePlayer();
-
             model.Result = GetResult();
+
+            mgr.ChangePlayer();
 
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
@@ -136,12 +136,11 @@ namespace AllIsFair.Controllers
             var result = new ResultVM();
             result.TurnNumber = mgr.CurrentGame.CurrentTurnNumber;
 
-            var playerResults = mgr.CurrentPlayer.Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
-            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x => !x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
+            var playerResults = mgr.CurrentPlayer.Results.FirstOrDefault(x => x.TurnNumber == mgr.CurrentGame.CurrentTurnNumber);
+            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x => !x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber == mgr.CurrentGame.CurrentTurnNumber);
 
             if (playerResults != null)
             {
-
                 result.Event = new EventVM()
                 {
                     Name = playerResults.Event.Name,
@@ -155,6 +154,7 @@ namespace AllIsFair.Controllers
 
                 if (playerResults.Event.ItemReward != null)
                     result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
+
                 result.Rolls = playerResults.Rolls.ToList();
                 result.DieResultGraphics = result.Rolls.GetDieGraphics();
                 result.StatReward = playerResults.StatReward;

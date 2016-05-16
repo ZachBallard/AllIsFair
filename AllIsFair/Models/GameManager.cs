@@ -462,6 +462,7 @@ namespace AllIsFair.Models
             {
                 TurnNumber = CurrentGame.CurrentTurnNumber,
                 Rolls = attackerRoll,
+                IsAttack = true
             });
 
             defender.Results.Add(new Result()
@@ -469,6 +470,7 @@ namespace AllIsFair.Models
                 Healthloss = healthloss,
                 TurnNumber = CurrentGame.CurrentTurnNumber,
                 Rolls = defenderRoll,
+                IsAttack = true
             });
 
             RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.");
@@ -509,24 +511,25 @@ namespace AllIsFair.Models
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
 
             var flip = failedRoll ? -1 : 1;
-            var statReward = eventCard.StatReward * flip;
+            var statReward = eventCard.StatReward; //* flip; Not implementing at this time
 
-            switch (eventCard.RequiredStat)
+            if (statReward > 0)
             {
-                case Stat.Strength:
-                    player.Strength += eventCard.StatReward * flip;
-                    break;
-                case Stat.Speed:
-                    player.Speed += eventCard.StatReward * flip;
-                    break;
-                case Stat.Sanity:
-                    player.Sanity += eventCard.StatReward * flip;
-                    break;
-                case Stat.Perception:
-                    player.Perception += eventCard.StatReward * flip;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                switch (eventCard.RequiredStat)
+                {
+                    case Stat.Strength:
+                        player.Strength += eventCard.StatReward; // * flip;
+                        break;
+                    case Stat.Speed:
+                        player.Speed += eventCard.StatReward; // * flip;
+                        break;
+                    case Stat.Sanity:
+                        player.Sanity += eventCard.StatReward; // * flip;
+                        break;
+                    case Stat.Perception:
+                        player.Perception += eventCard.StatReward; // * flip;
+                        break;
+                }
             }
 
             if (!failedRoll && eventCard.ItemReward != null)

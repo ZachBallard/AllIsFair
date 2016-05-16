@@ -17,7 +17,7 @@
 
     </div>
 
-    <div class="container" ng-if="game.Result.IsAttack && game.Result != null">
+    <div class="container bottombar" ng-if="game.Result.IsAttack && game.Result != null">
         <div ng-repeat="r in game.Result.DieResultGraphics">
             <img class="img-responsive" style="width: 100%;" ng-src="{{r}}" />
         </div>
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="container" ng-if="!game.Result.IsAttack && game.Result != null">
+    <div class="container bottombar" ng-if="!game.Result.IsAttack && game.Result != null">
         <div class="card">
             <div class="innerborder">
                 <div class="cardtext">
