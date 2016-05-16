@@ -43,7 +43,7 @@ namespace AllIsFair.Models
             game.CurrentTurnNumber = 1;
             game.CurrentTurnOrder = 1;
 
-            game.Events = GetEvents();
+            game.Events = GetEvents(game);
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
             var enemyStartingTile = game.Tiles.First(x => x.X == 2 && x.Y == 2);
@@ -57,142 +57,199 @@ namespace AllIsFair.Models
             return game;
         }
 
-        private List<Event> GetEvents()
+        private List<Event> GetEvents(Game game)
         {
-            var eventList = new List<Event>();
-
-            eventList.Add(new Event()
+            var eventList = new List<Event>
             {
-                Description = "A promising looking shed stands lonely before you. You try the door but it seems barred from the other side. You think you can move it with enough force.",
-                Name = "Suspicious Shed",
-                TargetNumber = 8,
-                RequiredStat = Stat.Strength,
-                StatReward = 0,
-                ItemReward = new Item() { IsWeapon = false, Name = "Medical Kit", DoesCount = true, Counter = 3, SurvivalBonus = 3, GraphicName = "medkit.png" },
-                GraphicName = "suspiciousshed.png",
-                Type = EventType.City
-            });
+                new Event()
+                {
+                    Description =
+                        "A promising looking shed stands lonely before you. You try the door but it seems barred from the other side. You think you can move it with enough force.",
+                    Name = "Suspicious Shed",
+                    TargetNumber = 8,
+                    RequiredStat = Stat.Strength,
+                    StatReward = 0,
+                    ItemReward =
+                        new Item()
+                        {
+                            IsWeapon = false,
+                            Name = "Medical Kit",
+                            DoesCount = true,
+                            Counter = 3,
+                            SurvivalBonus = 3,
+                            GraphicName = "medkit.png"
+                        },
+                    GraphicName = "suspiciousshed.png",
+                    Type = EventType.City
+                },
+                new Event()
+                {
+                    Description =
+                        "This part of the city is unnaturally dark. It claws at your vision. You stumble through the streets hoping to find your way, but something may have found you first.",
+                    Name = "Something Waiting",
+                    TargetNumber = 10,
+                    RequiredStat = Stat.Perception,
+                    StatReward = 1,
+                    GraphicName = "inthedark.png",
+                    Type = EventType.City
+                },
+                new Event()
+                {
+                    Description =
+                        "An old, battered building hides a lucky find. A revolver. But just as you try to leave with the reward the structure gives in leaving you trapped in a heap. The noise has surely attracted guests.",
+                    Name = "Trapped!",
+                    TargetNumber = 22,
+                    RequiredStat = Stat.Survivability,
+                    ItemReward =
+                        new Item()
+                        {
+                            IsWeapon = true,
+                            Name = "Revolver",
+                            DoesCount = false,
+                            ThreatBonus = 2,
+                            WeaponRange = 2,
+                            GraphicName = "revolver.png"
+                        },
+                    GraphicName = "trapped.png",
+                    Type = EventType.City
+                },
+                new Event()
+                {
+                    Description =
+                        "The forest wants to keep you forever. It bends and swells to keep you going in circles. Panic begins to set in.",
+                    Name = "Lost",
+                    TargetNumber = 6,
+                    RequiredStat = Stat.Sanity,
+                    StatReward = 1,
+                    GraphicName = "lost.png",
+                    Type = EventType.Wilderness
+                },
+                new Event()
+                {
+                    Description =
+                        "This used to be a camp. Tatters of clothing and tents are everywhere. Perhaps you can find something useful.",
+                    Name = "Forgotten Camp",
+                    TargetNumber = 12,
+                    RequiredStat = Stat.Perception,
+                    ItemReward =
+                        new Item()
+                        {
+                            IsWeapon = false,
+                            Name = "Bag of Junk",
+                            DoesCount = true,
+                            Counter = 5,
+                            SurvivalBonus = 1,
+                            GraphicName = "bagofjunk.png"
+                        },
+                    GraphicName = "forgottencamp.png",
+                    Type = EventType.Wilderness
+                },
+                new Event()
+                {
+                    Description = "Oh look, a baby bear. How cute. My, my, that mother is tall. You need to run. Now.",
+                    Name = "Mad Mother",
+                    TargetNumber = 12,
+                    RequiredStat = Stat.Speed,
+                    ItemReward =
+                        new Item()
+                        {
+                            IsWeapon = false,
+                            Name = "Adrenaline!",
+                            DoesCount = true,
+                            Counter = 2,
+                            SurvivalBonus = 2,
+                            GraphicName = "adrenaline.png"
+                        },
+                    GraphicName = "madmother.png",
+                    Type = EventType.Wilderness
+                },
+                new Event()
+                {
+                    Description =
+                        "Suddenly, the ground errupts in front of you. Sniper! You need to figure out where the shot came from fast. And not be where another can find you.",
+                    Name = "Sniper",
+                    TargetNumber = 9,
+                    RequiredStat = Stat.Perception,
+                    StatReward = 1,
+                    GraphicName = "sniper.png",
+                    Type = EventType.Expanse
+                },
+                new Event()
+                {
+                    Description =
+                        "Something is on your trail. Lots of somethings. You can hear the barks and howls. You need to move quickly.",
+                    Name = "Wolves",
+                    TargetNumber = 18,
+                    RequiredStat = Stat.Threat,
+                    ItemReward =
+                        new Item()
+                        {
+                            IsWeapon = false,
+                            Name = "Adrenaline!",
+                            DoesCount = true,
+                            Counter = 2,
+                            SurvivalBonus = 2,
+                            GraphicName = "adrenaline.png"
+                        },
+                    GraphicName = "wolves.png",
+                    Type = EventType.Expanse
+                },
+                new Event()
+                {
+                    Description =
+                        "Wide open spaces. Nothing to see, nothing to do. But you found a walking stick! With a little work this could make an excellent spear.",
+                    Name = "Lucky Spear",
+                    TargetNumber = 19,
+                    RequiredStat = Stat.Survivability,
+                    ItemReward =
+                        new Item()
+                        {
+                            IsWeapon = true,
+                            Name = "Spear",
+                            SurvivalBonus = 1,
+                            ThreatBonus = 1,
+                            WeaponRange = 1,
+                            GraphicName = "adrenaline.png"
+                        },
+                    GraphicName = "luckyspear.png",
+                    Type = EventType.Expanse
+                },
+                new Event()
+                {
+                    Description =
+                        "Its hard work getting through these mountains. And it is a long way down. You must press on.",
+                    Name = "Tricky Climb",
+                    TargetNumber = 10,
+                    RequiredStat = Stat.Strength,
+                    StatReward = 2,
+                    GraphicName = "trickyclimb.png",
+                    Type = EventType.Mountain
+                },
+                new Event()
+                {
+                    Description =
+                        "The sun goes down before you can make it up the cliff, but you found a small overhang. You can hardly see your own hands. Looks like you found your bed. Getting rest here will not be easy.",
+                    Name = "Stuck",
+                    TargetNumber = 10,
+                    RequiredStat = Stat.Sanity,
+                    StatReward = 1,
+                    GraphicName = "stuck.png",
+                    Type = EventType.Mountain
+                },
+                new Event()
+                {
+                    Description =
+                        "Your handhold gives in, tumbling down the rocky face. A lucky branch catches your bag. You are safe, but it wont be easy getting back up.",
+                    Name = "Cliffhanger",
+                    TargetNumber = 8,
+                    RequiredStat = Stat.Strength,
+                    StatReward = 1,
+                    GraphicName = "cliffhanger.png",
+                    Type = EventType.Mountain
+                }
+            };
 
-            eventList.Add(new Event()
-            {
-                Description = "This part of the city is unnaturally dark. It claws at your vision. You stumble through the streets hoping to find your way, but something may have found you first.",
-                Name = "Something Waiting",
-                TargetNumber = 10,
-                RequiredStat = Stat.Perception,
-                StatReward = 1,
-                GraphicName = "inthedark.png",
-                Type = EventType.City
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "An old, battered building hides a lucky find. A revolver. But just as you try to leave with the reward the structure gives in leaving you trapped in a heap. The noise has surely attracted guests.",
-                Name = "Trapped!",
-                TargetNumber = 22,
-                RequiredStat = Stat.Survivability,
-                ItemReward = new Item() { IsWeapon = true, Name = "Revolver", DoesCount = false, ThreatBonus = 2, WeaponRange = 2, GraphicName = "revolver.png" },
-                GraphicName = "trapped.png",
-                Type = EventType.City
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "The forest wants to keep you forever. It bends and swells to keep you going in circles. Panic begins to set in.",
-                Name = "Lost",
-                TargetNumber = 6,
-                RequiredStat = Stat.Sanity,
-                StatReward = 1,
-                GraphicName = "lost.png",
-                Type = EventType.Wilderness
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "This used to be a camp. Tatters of clothing and tents are everywhere. Perhaps you can find something useful.",
-                Name = "Forgotten Camp",
-                TargetNumber = 12,
-                RequiredStat = Stat.Perception,
-                ItemReward = new Item() { IsWeapon = false, Name = "Bag of Junk", DoesCount = true, Counter = 5, SurvivalBonus = 1, GraphicName = "bagofjunk.png" },
-                GraphicName = "forgottencamp.png",
-                Type = EventType.Wilderness
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "Oh look, a baby bear. How cute. My, my, that mother is tall. You need to run. Now.",
-                Name = "Mad Mother",
-                TargetNumber = 12,
-                RequiredStat = Stat.Speed,
-                ItemReward = new Item() { IsWeapon = false, Name = "Adrenaline!", DoesCount = true, Counter = 2, SurvivalBonus = 2, GraphicName = "adrenaline.png" },
-                GraphicName = "madmother.png",
-                Type = EventType.Wilderness
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "Suddenly, the ground errupts in front of you. Sniper! You need to figure out where the shot came from fast. And not be where another can find you.",
-                Name = "Sniper",
-                TargetNumber = 9,
-                RequiredStat = Stat.Perception,
-                StatReward = 1,
-                GraphicName = "sniper.png",
-                Type = EventType.Expanse
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "Something is on your trail. Lots of somethings. You can hear the barks and howls. You need to move quickly.",
-                Name = "Wolves",
-                TargetNumber = 18,
-                RequiredStat = Stat.Threat,
-                ItemReward = new Item() { IsWeapon = false, Name = "Adrenaline!", DoesCount = true, Counter = 2, SurvivalBonus = 2, GraphicName = "adrenaline.png" },
-                GraphicName = "wolves.png",
-                Type = EventType.Expanse
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "Wide open spaces. Nothing to see, nothing to do. But you found a walking stick! With a little work this could make an excellent spear.",
-                Name = "Lucky Spear",
-                TargetNumber = 19,
-                RequiredStat = Stat.Survivability,
-                ItemReward = new Item() { IsWeapon = true, Name = "Spear", SurvivalBonus = 1, ThreatBonus = 1, WeaponRange = 1, GraphicName = "adrenaline.png" },
-                GraphicName = "luckyspear.png",
-                Type = EventType.Expanse
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "Its hard work getting through these mountains. And it is a long way down. You must press on.",
-                Name = "Tricky Climb",
-                TargetNumber = 10,
-                RequiredStat = Stat.Strength,
-                StatReward = 2,
-                GraphicName = "trickyclimb.png",
-                Type = EventType.Mountain
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "The sun goes down before you can make it up the cliff, but you found a small overhang. You can hardly see your own hands. Looks like you found your bed. Getting rest here will not be easy.",
-                Name = "Stuck",
-                TargetNumber = 10,
-                RequiredStat = Stat.Sanity,
-                StatReward = 1,
-                GraphicName = "stuck.png",
-                Type = EventType.Mountain
-            });
-
-            eventList.Add(new Event()
-            {
-                Description = "Your handhold gives in, tumbling down the rocky face. A lucky branch catches your bag. You are safe, but it wont be easy getting back up.",
-                Name = "Cliffhanger",
-                TargetNumber = 8,
-                RequiredStat = Stat.Strength,
-                StatReward = 1,
-                GraphicName = "cliffhanger.png",
-                Type = EventType.Mountain
-            });
+            eventList.ForEach(e => e.Game = game);
 
             return eventList;
         }
@@ -355,7 +412,6 @@ namespace AllIsFair.Models
                 {
                     return EventType.None;
                 }
-
             }
 
             attacker.Tile.Combatant = null;
@@ -409,7 +465,6 @@ namespace AllIsFair.Models
             RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.");
             _db.SaveChanges();
 
-
             return true;
         }
 
@@ -441,7 +496,6 @@ namespace AllIsFair.Models
                     numOfDice = player.Survivability;
                     break;
             }
-
 
             var dieResults = GameHelpers.RollDie(numOfDice);
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
@@ -502,7 +556,6 @@ namespace AllIsFair.Models
 
             //TODO Record draw event card.
             RecordAction(Action.DrawEventCard, "TODO", player);
-
 
             _db.SaveChanges();
         }

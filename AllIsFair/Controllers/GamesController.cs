@@ -36,7 +36,7 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
-            if (model.Result.TurnNumber == 0)
+            if (model.Result.TurnNumber != 0)
             {
                 mgr.ChangePlayer();
             }

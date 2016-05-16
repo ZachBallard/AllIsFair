@@ -14,7 +14,6 @@ namespace AllIsFair.Models
         public int SurvivalBonus { get; set; }
         public int ThreatBonus { get; set; }
 
-        [Required]
         public Combatant Combatant { get; set; }
     }
 }
