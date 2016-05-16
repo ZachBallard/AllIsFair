@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Web.Services.Description;
 using Microsoft.Ajax.Utilities;
+using WebGrease.Css.Ast;
 using WebGrease.Css.Extensions;
 
 namespace AllIsFair.Models
@@ -442,7 +443,7 @@ namespace AllIsFair.Models
                 range = weapon.WeaponRange + 0.5;
             }
 
-            if (distance > range)
+            if (distance > range + 0.5)
             {
                 return false;
             }
@@ -478,9 +479,8 @@ namespace AllIsFair.Models
 
         public void DrawEventCard(Combatant player, EventType type)
         {
-            var eventCard = CurrentGame.Events.FirstOrDefault(x => x.Type == type);
-            CurrentGame.Events.Remove(eventCard);
-            CurrentGame.Events.Add(eventCard);
+            var possibleEvents = CurrentGame.Events.OrderBy(x => Guid.NewGuid()).ToList();
+            var eventCard = possibleEvents.FirstOrDefault(x => x.Type == type);
 
             var numOfDice = 0;
             switch (eventCard.RequiredStat)
@@ -568,8 +568,6 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-       
-
         public void ChangePlayer()
         {
             if (CurrentPlayer.TurnOrder == CurrentGame.Combatants.Count)
@@ -580,6 +578,16 @@ namespace AllIsFair.Models
             else
             {
                 _db.Games.Find(_currentGameId).CurrentTurnOrder++;
+            }
+
+            _db.SaveChanges();
+        }
+
+        public void RemoveResults()
+        {
+            foreach (var c in CurrentGame.Combatants)
+            {
+                c.Results.Clear();
             }
 
             _db.SaveChanges();

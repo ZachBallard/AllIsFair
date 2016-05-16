@@ -36,10 +36,9 @@ namespace AllIsFair.Controllers
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
-            if (model.Result.TurnNumber != 0)
-            {
-                mgr.ChangePlayer();
-            }
+            mgr.ChangePlayer();
+
+            model.Result = GetResult();
 
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
@@ -79,8 +78,6 @@ namespace AllIsFair.Controllers
                 }
             }
 
-            model.Result = GetResult();
-
             model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(10).Select(x => new GameActionVM()
             {
                 Id = x.Id,
@@ -89,6 +86,8 @@ namespace AllIsFair.Controllers
                 Message = x.Message,
                 PlayerName = x.Combatant?.Name
             }).ToList();
+
+            mgr.RemoveResults();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -138,16 +137,16 @@ namespace AllIsFair.Controllers
             result.TurnNumber = mgr.CurrentGame.CurrentTurnNumber;
 
             var playerResults = mgr.CurrentPlayer.Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
-            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x=>!x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
+            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x => !x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber == result.TurnNumber);
 
             if (playerResults != null)
             {
-                
+
                 result.Event = new EventVM()
                 {
                     Name = playerResults.Event.Name,
                     GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
-                    RequiredStat = playerResults.Event.RequiredStat,
+                    RequiredStat = playerResults.Event.RequiredStat.ToString(),
                     TargetNumber = playerResults.Event.TargetNumber,
                     Type = playerResults.Event.Type,
                     StatReward = playerResults.Event.StatReward,

@@ -30,7 +30,7 @@ namespace AllIsFair.Models
     {
         public string Name { get; set; }
         public string GraphicName { get; set; } //use for finding in folder
-        public Stat RequiredStat { get; set; } //st sp sa pe th su
+        public string RequiredStat { get; set; } //st sp sa pe th su
         public int TargetNumber { get; set; }
         public EventType Type { get; set; } //which tile can draw
         public int StatReward { get; set; }

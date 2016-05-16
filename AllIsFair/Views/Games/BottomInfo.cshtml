@@ -1,13 +1,13 @@
 ﻿
 <div class="col-xs-3 col-xs-offset-1">
     <h4>{{game.Player.Name}}</h4>
-    <br/>
+    <br />
     <h4>Health: {{game.Player.Health}}</h4>
     <h4>Strength: {{game.Player.Strength}}</h4>
     <h4>Speed: {{game.Player.Speed}}</h4>
     <h4>Sanity: {{game.Player.Sanity}}</h4>
     <h4>Perception: {{game.Player.Perception}}</h4>
-    <br/>
+    <br />
     <h4>Threat: {{game.Player.Threat}}</h4>
     <h4>Survivability: {{game.Player.Survivability}}</h4>
 </div>
@@ -17,34 +17,38 @@
 </div>
 
 <div class="card" ng-repeat="w in game.Player.Weapons">
-    <div class="cardtext">
-        <h4> {{w.Name}} </h4>
-    </div>
-    <img class="img-responsive" style="width: 100%;" ng-src="{{w.GraphicName}}" />
-    <div class="cardtext">
-        <h6>Range: {{w.WeaponRange}}</h6>
-        <h6>Threat: + {{w.ThreatBonus}}</h6>
-        <h6>Survival: + {{w.SurvivalBonus}}</h6>
+    <div class="innerborder">
+        <div class="cardtext">
+            <h4> {{w.Name}} </h4>
+        </div>
+        <img class="img-responsive cardgraphic" style="width: 100%;" ng-src="{{w.GraphicName}}" />
+        <div class="cardtext">
+            <h6>Range: {{w.WeaponRange}}</h6>
+            <h6>Threat: + {{w.ThreatBonus}}</h6>
+            <h6>Survival: + {{w.SurvivalBonus}}</h6>
+        </div>
     </div>
 </div>
 
-   
+
 <div class="card" ng-repeat="i in game.Player.Items">
-    <div class="cardtext">
-        <h4> {{i.Name}} </h4>
-    </div>
-    <img class="img-responsive" style="width: 100%;" ng-src="{{i.GraphicName}}" />
-    <div class="cardtext">
-        <h6>Counters: {{i.Counter}}</h6>
-        <h6>Threat: + {{i.ThreatBonus}}</h6>
-        <h6>Survival: + {{i.SurvivalBonus}}</h6>
+    <div class="innerborder">
+        <div class="cardtext">
+            <h4> {{i.Name}} </h4>
+        </div>
+        <img class="img-responsive cardgraphic" style="width: 100%;" ng-src="{{i.GraphicName}}" />
+        <div class="cardtext">
+            <h6>Counters: {{i.Counter}}</h6>
+            <h6>Threat: + {{i.ThreatBonus}}</h6>
+            <h6>Survival: + {{i.SurvivalBonus}}</h6>
+        </div>
     </div>
 </div>
 
 @*@{ var cardsLeft = Model.Items.Count(x => !x.IsWeapon); }
-@for (int i = cardsLeft; i < 4; i++)
-{
-    <div class="card">
-        <h4>No Item</h4>
-    </div>
-}*@
+    @for (int i = cardsLeft; i < 4; i++)
+    {
+        <div class="card">
+            <h4>No Item</h4>
+        </div>
+    }*@
