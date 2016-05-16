@@ -128,7 +128,7 @@ namespace AllIsFair.Controllers
             mgr.DeleteGame();
 
             var result = new { Message = "Game Deleted" };
-            return Json(result);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

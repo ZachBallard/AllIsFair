@@ -43,7 +43,7 @@ namespace AllIsFair.Models
             game.CurrentTurnNumber = 1;
             game.CurrentTurnOrder = 1;
 
-            // game.Events = GetEvents();
+            game.Events = GetEvents();
 
             var playerStartingTile = game.Tiles.First(x => x.X == 12 && x.Y == 12);
             var enemyStartingTile = game.Tiles.First(x => x.X == 2 && x.Y == 2);
