@@ -30,15 +30,17 @@ namespace AllIsFair.Controllers
 
         public ActionResult GetGameState()
         {
+            var results = GetResult();
+
+            mgr.ChangePlayer();
+
             var model = new GameVM
             {
                 NumOfAlive = mgr.CurrentGame.Combatants.Count(),
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
             };
 
-            model.Result = GetResult();
-
-            mgr.ChangePlayer();
+            model.Result = results;
 
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
@@ -78,7 +80,7 @@ namespace AllIsFair.Controllers
                 }
             }
 
-            model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(10).Select(x => new GameActionVM()
+            model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(5).Select(x => new GameActionVM()
             {
                 Id = x.Id,
                 Action = x.Action.ToString(),
@@ -86,8 +88,6 @@ namespace AllIsFair.Controllers
                 Message = x.Message,
                 PlayerName = x.Combatant?.Name
             }).ToList();
-
-            mgr.RemoveResults();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -137,7 +137,7 @@ namespace AllIsFair.Controllers
             result.TurnNumber = mgr.CurrentGame.CurrentTurnNumber;
 
             var playerResults = mgr.CurrentPlayer.Results.FirstOrDefault(x => x.TurnNumber == mgr.CurrentGame.CurrentTurnNumber);
-            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x => !x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber == mgr.CurrentGame.CurrentTurnNumber);
+            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x => !x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber >= mgr.CurrentGame.CurrentTurnNumber);
 
             if (playerResults != null)
             {

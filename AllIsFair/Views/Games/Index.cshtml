@@ -1,6 +1,5 @@
 ﻿
 <div class="container" ng-controller="gamecontroller">
-
     <div class="row">
         <div class="topbar">
             <h4>Alive: {{game.NumOfAlive}} &nbsp;&nbsp;&nbsp;&nbsp;Dead: {{game.NumOfDead}} &nbsp;&nbsp;&nbsp;&nbsp;It is {{game.Player.Name}}'s turn!</h4>
@@ -8,13 +7,11 @@
     </div>
 
     <div class="row container map">
-
         <div ng-click="tileClick(tile)" ng-repeat="tile in game.Tiles | orderBy:'X' | orderBy:'Y'" ng-class="{'possibleMove' : tile.IsPossibleMove}" class="col-xs-1 tile">
             <img class="img-responsive" ng-src="{{tile.GraphicName}}" />
 
             <img class="img-responsive player" ng-src="{{tile.CombatantGraphicName}}" ng-show="tile.CombatantGraphicName" />
         </div>
-
     </div>
 
     <div class="container bottombar" ng-if="game.Result.IsAttack && game.Result != null">
@@ -25,7 +22,7 @@
             <img class="img-responsive" style="width: 100%;" ng-src="{{r}}" />
         </div>
         <div>
-            <p>{{game.Player.Name}} inflicted {{game.Result.Healthloss}} damage!</p>
+            <h6>{{game.Player.Name}} inflicted {{game.Result.Healthloss}} damage!</h6>
         </div>
     </div>
 

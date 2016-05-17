@@ -95,7 +95,7 @@ h6 {
 }
 
 .cardgraphic {
-    border: solid 1px darkred;
+    border: solid 3px darkred;
 }
 .innerborder {
     border: solid 3px goldenrod;
@@ -107,7 +107,7 @@ h6 {
     padding: 4px;
     margin: 5px;
     border-radius: 5px;
-    height: 315px;
+    min-height: 315px;
     width: 150px;
     background-image: url("http://i.imgur.com/8V0lL.jpg");
     float: left;

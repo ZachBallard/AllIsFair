@@ -178,7 +178,7 @@ namespace AllIsFair.Models
                 new Event()
                 {
                     Description =
-                        "Something is on your trail. Lots of somethings. You can hear the barks and howls. You need to move quickly.",
+                        "You are surrounded. You can hear the barks and howls. They think you are weak. You'll show them.",
                     Name = "Wolves",
                     TargetNumber = 18,
                     RequiredStat = Stat.Threat,
@@ -581,16 +581,6 @@ namespace AllIsFair.Models
             else
             {
                 _db.Games.Find(_currentGameId).CurrentTurnOrder++;
-            }
-
-            _db.SaveChanges();
-        }
-
-        public void RemoveResults()
-        {
-            foreach (var c in CurrentGame.Combatants)
-            {
-                c.Results.Clear();
             }
 
             _db.SaveChanges();
