@@ -407,8 +407,15 @@ namespace AllIsFair.Models
             _db.SaveChanges();
         }
 
-        public EventType PlayerMove(int newX, int newY, Combatant attacker)
+        public PlayerMoveResult PlayerMove(int newX, int newY, Combatant attacker)
         {
+            var result = new PlayerMoveResult
+            {
+                EventType = EventType.None,
+                TurnOrder = CurrentGame.CurrentTurnOrder,
+                TurnNumber = CurrentGame.CurrentTurnNumber
+            };
+
             var to = CurrentGame.Tiles.GetTile(newX, newY);
 
             if (to.Combatant != null && to.Combatant != attacker)
@@ -419,15 +426,26 @@ namespace AllIsFair.Models
 
                 if (didAttack)
                 {
-                    return EventType.None;
+                    ChangePlayer();
+                    return result;
                 }
             }
 
             attacker.Tile.Combatant = null;
             attacker.Tile = to;
             RecordAction(Action.Move, $"Moved from {attacker.Tile.X},{attacker.Tile.Y} to {newX},{newY}.");
+            result.EventType = @to.Type;
+
+            if (@to.Type != EventType.None)
+            {
+                DrawEventCard(CurrentPlayer, @to.Type);
+            }
+
+            ChangePlayer();
+
             _db.SaveChanges();
-            return @to.Type;
+           
+            return result;
         }
 
         private bool TryAttack(Combatant attacker, Tile @from, Tile @to)
@@ -458,17 +476,15 @@ namespace AllIsFair.Models
                 defender.Health -= healthloss;
             }
 
-            attacker.Results.Add(new Result()
+            attacker.Results.Add(new Result(CurrentGame.CurrentTurnNumber, CurrentGame.CurrentTurnOrder)
             {
-                TurnNumber = CurrentGame.CurrentTurnNumber,
                 Rolls = attackerRoll.ConvertNumberListToString(),
                 IsAttack = true
             });
 
-            defender.Results.Add(new Result()
+            defender.Results.Add(new Result(CurrentGame.CurrentTurnNumber, CurrentGame.CurrentTurnOrder)
             {
                 Healthloss = healthloss,
-                TurnNumber = CurrentGame.CurrentTurnNumber,
                 Rolls = defenderRoll.ConvertNumberListToString(),
                 IsAttack = true
             });
@@ -479,7 +495,7 @@ namespace AllIsFair.Models
             return true;
         }
 
-        public void DrawEventCard(Combatant player, EventType type)
+        private void DrawEventCard(Combatant player, EventType type)
         {
             var possibleEvents = CurrentGame.Events.OrderBy(x => Guid.NewGuid()).ToList();
             var eventCard = possibleEvents.FirstOrDefault(x => x.Type == type);
@@ -557,9 +573,8 @@ namespace AllIsFair.Models
                 }
             }
 
-            player.Results.Add(new Result()
+            player.Results.Add(new Result(CurrentGame.CurrentTurnNumber, CurrentGame.CurrentTurnOrder)
             {
-                TurnNumber = CurrentGame.CurrentTurnNumber,
                 Event = eventCard,
                 Rolls = dieResults.ConvertNumberListToString(),
                 StatReward = statReward
@@ -567,12 +582,14 @@ namespace AllIsFair.Models
 
             //TODO Record draw event card.
             RecordAction(Action.DrawEventCard, "TODO", player);
-
             _db.SaveChanges();
         }
 
-        public void ChangePlayer()
+        private void ChangePlayer()
         {
+
+            RemoveUsedUpItems();
+
             if (CurrentPlayer.TurnOrder == CurrentGame.Combatants.Count)
             {
                 _db.Games.Find(_currentGameId).CurrentTurnNumber++;
@@ -585,5 +602,26 @@ namespace AllIsFair.Models
 
             _db.SaveChanges();
         }
+
+        private void RemoveUsedUpItems()
+        {
+            foreach (var item in CurrentPlayer.Items.Where(item => item.DoesCount))
+            {
+                item.Counter--;
+
+                if (item.Counter <= 0)
+                {
+                    CurrentPlayer.Items.Remove(item);
+                }
+            }
+        }
+    }
+
+    public class PlayerMoveResult
+    {
+        public EventType EventType { get; set; }
+        public int TurnNumber { get; set; }
+        public int TurnOrder { get; set; }
+
     }
 }

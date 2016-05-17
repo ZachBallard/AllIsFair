@@ -18,7 +18,6 @@
 
         function refreshGameState() {
             $http.get("/games/getgamestate").then(function (res) {
-                console.log(res.data);
                 $scope.game = res.data;
             });
         }
@@ -30,7 +29,7 @@
             console.log(tile);
             $http.post("/games/trymove", { x2: tile.X, y2: tile.Y }).then(function (res) {
                 console.log(res.data);
-                refreshGameState();
+                $scope.game = res.data;
             });
         }
 

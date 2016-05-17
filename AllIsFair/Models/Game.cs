@@ -19,8 +19,19 @@ namespace AllIsFair.Models
 
     public class Result
     {
+        public Result()
+        {
+            
+        }
+        public Result(int currentTurnNumber, int currentTurnOrder)
+        {
+            TurnOrder = currentTurnOrder;
+            TurnNumber = currentTurnNumber;
+        }
+
         public int Id { get; set; }
         public int TurnNumber { get; set; }
+        public int TurnOrder { get; set; }
         public int Healthloss { get; set; }
         public int StatReward { get; set; }
 

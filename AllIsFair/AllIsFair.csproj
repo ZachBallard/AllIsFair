@@ -212,6 +212,10 @@
     <Compile Include="Migrations\201605171615363_StoreRollsAsString.Designer.cs">
       <DependentUpon>201605171615363_StoreRollsAsString.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605171705345_ResultTurnOrder.cs" />
+    <Compile Include="Migrations\201605171705345_ResultTurnOrder.Designer.cs">
+      <DependentUpon>201605171705345_ResultTurnOrder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Combatant.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\Game.cs" />
@@ -380,6 +384,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605171615363_StoreRollsAsString.resx">
       <DependentUpon>201605171615363_StoreRollsAsString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605171705345_ResultTurnOrder.resx">
+      <DependentUpon>201605171705345_ResultTurnOrder.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

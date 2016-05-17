@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
-using System.Web.Razor.Generator;
 using AllIsFair.Models;
 using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security.Provider;
 
 namespace AllIsFair.Controllers
 {
     [Authorize]
     public class GamesController : Controller
     {
+        private GameManager mgr;
+
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             mgr = new GameManager(User.Identity.GetUserId(), new ApplicationDbContext());
@@ -26,68 +17,58 @@ namespace AllIsFair.Controllers
             base.OnActionExecuting(filterContext);
         }
 
-        private GameManager mgr;
-
-        public ActionResult GetGameState()
+        public ActionResult GetGameState(int? turnNumber, int? turnOrder)
         {
-            var results = GetResult();
+            var results = GetResult(turnNumber ?? mgr.CurrentGame.CurrentTurnNumber, turnOrder ?? mgr.CurrentGame.CurrentTurnOrder);
 
-            mgr.ChangePlayer();
+            var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
             var model = new GameVM
             {
                 NumOfAlive = mgr.CurrentGame.Combatants.Count(),
-                NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null)
-            };
-
-            model.Result = results;
-
-            var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
-
-            model.Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM()
-            {
-                Id = x.Id,
-                X = x.X,
-                Y = x.Y,
-                Type = x.Type,
-                GraphicName = "/Graphics/" + x.GraphicName,
-                CombatantGraphicName = x.Combatant == null ? "" : "/Graphics/" + x.Combatant.GraphicName,
-                IsPossibleMove = moves.Any(t => t.Id == x.Id)
-            });
-
-            model.Player = new PlayerVM()
-            {
-                Name = mgr.CurrentPlayer.Name,
-                Health = mgr.CurrentPlayer.Health.ToString(),
-                Strength = mgr.CurrentPlayer.Strength.ToString(),
-                Speed = mgr.CurrentPlayer.Speed.ToString(),
-                Sanity = mgr.CurrentPlayer.Sanity.ToString(),
-                Perception = mgr.CurrentPlayer.Perception.ToString(),
-                Threat = mgr.CurrentPlayer.Threat.ToString(),
-                Survivability = mgr.CurrentPlayer.Survivability.ToString(),
-                Items = mgr.CurrentPlayer.Items.Where(i => !i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
-                Weapons = mgr.CurrentPlayer.Items.Where(i => i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
-                GraphicName = mgr.CurrentPlayer.GraphicName
-            };
-
-            foreach (var item in model.Player.Items.Where(item => item.DoesCount))
-            {
-                item.Counter--;
-
-                if (item.Counter <= 0)
+                NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null),
+                Result = results,
+                Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM
                 {
-                    model.Player.Items.Remove(item);
-                }
-            }
+                    Id = x.Id,
+                    X = x.X,
+                    Y = x.Y,
+                    Type = x.Type,
+                    GraphicName = "/Graphics/" + x.GraphicName,
+                    CombatantGraphicName = x.Combatant == null ? "" : "/Graphics/" + x.Combatant.GraphicName,
+                    IsPossibleMove = moves.Any(t => t.Id == x.Id)
+                }),
+                Player = new PlayerVM
+                {
+                    Name = mgr.CurrentPlayer.Name,
+                    Health = mgr.CurrentPlayer.Health.ToString(),
+                    Strength = mgr.CurrentPlayer.Strength.ToString(),
+                    Speed = mgr.CurrentPlayer.Speed.ToString(),
+                    Sanity = mgr.CurrentPlayer.Sanity.ToString(),
+                    Perception = mgr.CurrentPlayer.Perception.ToString(),
+                    Threat = mgr.CurrentPlayer.Threat.ToString(),
+                    Survivability = mgr.CurrentPlayer.Survivability.ToString(),
+                    Items = mgr.CurrentPlayer.Items.Where(i => !i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
+                    Weapons = mgr.CurrentPlayer.Items.Where(i => i.IsWeapon).Select(x => new ItemVM(x)).ToList(),
+                    GraphicName = mgr.CurrentPlayer.GraphicName
+                },
+                GameActions =
+                    mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(5).Select(x => new GameActionVM
+                    {
+                        Id = x.Id,
+                        Action = x.Action.ToString(),
+                        Date = x.Date.ToString(),
+                        Message = x.Message,
+                        PlayerName = x.Combatant?.Name
+                    }).ToList()
+            };
 
-            model.GameActions = mgr.CurrentGame.GameActions.OrderByDescending(x => x.Date).Take(5).Select(x => new GameActionVM()
-            {
-                Id = x.Id,
-                Action = x.Action.ToString(),
-                Date = x.Date.ToString(),
-                Message = x.Message,
-                PlayerName = x.Combatant?.Name
-            }).ToList();
+
+
+
+
+          
+
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -101,52 +82,42 @@ namespace AllIsFair.Controllers
         [HttpPost]
         public ActionResult TryMove(int x2, int y2)
         {
-            var eventType = mgr.PlayerMove(x2, y2, mgr.CurrentPlayer);
+            var result = mgr.PlayerMove(x2, y2, mgr.CurrentPlayer);
 
-            if (eventType != EventType.None)
-            {
-                DrawEvent(eventType);
-            }
-
-            var result = new { eventType, Message = "message" };
-            return Json(result);
+            return GetGameState(result.TurnNumber, result.TurnOrder);
         }
 
-        //GET: Game/DrawEvent
-        [HttpPost]
-        public ActionResult DrawEvent(EventType type)
-        {
-            mgr.DrawEventCard(mgr.CurrentPlayer, type);
-
-            var result = new { Message = "message" };
-            return Json(result);
-        }
 
         public ActionResult Delete()
         {
             mgr.DeleteGame();
 
-            var result = new { Message = "Game Deleted" };
-            return Json(result, JsonRequestBehavior.AllowGet);
+            return RedirectToAction("Index");
         }
 
 
-        public ResultVM GetResult()
+        public ResultVM GetResult(int turnNumber, int turnOrder)
         {
             var result = new ResultVM();
             result.TurnNumber = mgr.CurrentGame.CurrentTurnNumber;
 
-            var playerResults = mgr.CurrentPlayer.Results.FirstOrDefault(x => x.TurnNumber == mgr.CurrentGame.CurrentTurnNumber);
-            var enemyResults = mgr.CurrentGame.Combatants.FirstOrDefault(x => !x.IsPlayer).Results.FirstOrDefault(x => x.TurnNumber >= mgr.CurrentGame.CurrentTurnNumber);
+            var playerResults =
+                mgr.CurrentGame.Combatants.FirstOrDefault(x=>x.TurnOrder == turnOrder).Results.FirstOrDefault(x => x.TurnNumber == turnNumber && x.TurnOrder == turnOrder );
+            var enemyResults =
+                mgr.CurrentGame.Combatants.FirstOrDefault(x => x.TurnOrder != turnOrder)
+                    .Results.FirstOrDefault(x => x.TurnNumber == turnNumber && x.TurnOrder == turnOrder);
 
             if (playerResults != null)
             {
                 if (playerResults.Event != null)
                 {
-                    result.Event = new EventVM()
+                    result.Event = new EventVM
                     {
                         Name = playerResults.Event.Name,
-                        GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
+                        GraphicName =
+                            playerResults.Event.GraphicName == null
+                                ? ""
+                                : "/Graphics/" + playerResults.Event.GraphicName,
                         RequiredStat = playerResults.Event.RequiredStat.ToString(),
                         TargetNumber = playerResults.Event.TargetNumber,
                         Type = playerResults.Event.Type,
@@ -158,6 +129,7 @@ namespace AllIsFair.Controllers
                         result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
                 }
 
+                result.PlayerName = playerResults.Combatant.Name;
                 result.Rolls = playerResults.Rolls.ConvertStringToNumberList();
                 result.DieResultGraphics = result.Rolls.GetDieGraphics();
                 result.StatReward = playerResults.StatReward;
@@ -165,6 +137,7 @@ namespace AllIsFair.Controllers
 
             if (enemyResults == null) return result;
 
+            
             result.IsAttack = true;
             result.EnemyRolls = enemyResults.Rolls.ConvertStringToNumberList();
             result.DieResultEnemyGraphics = result.Rolls.GetDieGraphics();
@@ -172,6 +145,5 @@ namespace AllIsFair.Controllers
 
             return result;
         }
-
     }
 }

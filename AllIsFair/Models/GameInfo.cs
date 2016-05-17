@@ -105,5 +105,6 @@ namespace AllIsFair.Models
         public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
         public EventVM Event { get; set; }
         public ItemVM ItemReward { get; set; }
+        public string PlayerName { get; set; }
     }
 }
