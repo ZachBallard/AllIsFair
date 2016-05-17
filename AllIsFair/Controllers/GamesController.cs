@@ -21,6 +21,12 @@ namespace AllIsFair.Controllers
         {
             var results = GetResult(turnNumber ?? mgr.CurrentGame.CurrentTurnNumber, turnOrder ?? mgr.CurrentGame.CurrentTurnOrder);
 
+            var playerColor = "possiblemoveblue";
+            if (mgr.CurrentPlayer.TurnOrder == 2)
+            {
+                playerColor = "possiblemovered";
+            }
+
             var moves = mgr.CurrentPlayer.GetPossibleMoves(mgr.CurrentGame.Tiles);
 
             var model = new GameVM
@@ -28,6 +34,7 @@ namespace AllIsFair.Controllers
                 NumOfAlive = mgr.CurrentGame.Combatants.Count(),
                 NumOfDead = mgr.CurrentGame.Combatants.Count(x => x.Killer != null),
                 Result = results,
+                PlayerColor = playerColor,
                 Tiles = mgr.CurrentGame.Tiles.Select(x => new TileVM
                 {
                     Id = x.Id,
@@ -36,7 +43,7 @@ namespace AllIsFair.Controllers
                     Type = x.Type,
                     GraphicName = "/Graphics/" + x.GraphicName,
                     CombatantGraphicName = x.Combatant == null ? "" : "/Graphics/" + x.Combatant.GraphicName,
-                    IsPossibleMove = moves.Any(t => t.Id == x.Id)
+                    IsPossibleMove = moves.Any(t => t.Id == x.Id),
                 }),
                 Player = new PlayerVM
                 {
@@ -85,7 +92,7 @@ namespace AllIsFair.Controllers
         {
             mgr.DeleteGame();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Games");
         }
 
 

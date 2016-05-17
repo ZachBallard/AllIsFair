@@ -12,7 +12,7 @@ namespace AllIsFair.Models
         public int NumOfDead { get; set; }
         public IEnumerable<TileVM> Tiles { get; set; } = new List<TileVM>();
         public PlayerVM Player { get; set; } = new PlayerVM();
-
+        public string PlayerColor { get; set; }
         public ResultVM Result { get; set; } = new ResultVM();
         public List<GameActionVM> GameActions { get; set; } = new List<GameActionVM>();
     }

@@ -1,13 +1,16 @@
 ﻿
 <div class="container" ng-controller="gamecontroller">
     <div class="row">
-        <div class="topbar">
+        <div class="topbar" >
+            <form action="Delete" method="post" ng-if="game.Result.DieResultGraphics.length">
+                <input type="submit" class="restartbutton" name="Delete" value="Restart Game" />
+            </form>
             <h4>Alive: {{game.NumOfAlive}} &nbsp;&nbsp;&nbsp;&nbsp;Dead: {{game.NumOfDead}} &nbsp;&nbsp;&nbsp;&nbsp;It is {{game.Player.Name}}'s turn!</h4>
         </div>
     </div>
 
     <div class="row container map">
-        <div ng-click="tileClick(tile)" ng-repeat="tile in game.Tiles | orderBy:'X' | orderBy:'Y'" ng-class="{'possibleMove' : tile.IsPossibleMove}" class="col-xs-1 tile">
+        <div ng-click="tileClick(tile)" ng-repeat="tile in game.Tiles | orderBy:'X' | orderBy:'Y'" ng-class="{ 'col-xs-1 tile {{game.PlayerColor}}' : tile.IsPossibleMove, 'col-xs-1 tile' : !tile.IsPossibleMove}">
             <img class="img-responsive" ng-src="{{tile.GraphicName}}" />
 
             <img class="img-responsive player" ng-src="{{tile.CombatantGraphicName}}" ng-show="tile.CombatantGraphicName" />

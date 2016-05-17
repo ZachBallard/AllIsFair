@@ -9,10 +9,12 @@
 .dieholder {
     width: 80%;
 }
+
 .die {
     width: 64px;
     float: left;
 }
+
 .homelogo {
     padding: 1% 0%;
 }
@@ -29,6 +31,15 @@
     color: white;
     font-family: Comic Sans MS, cursive, sans-serif;
     text-shadow: 1px 1px darkred;
+}
+
+.restartbutton {
+    background-color: darkred;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid white;
+    border-radius: 8px;
 }
 
 .homelink:hover {
@@ -79,20 +90,21 @@ h6 {
     position: relative;
 }
 
-.tile img.player {
-    width: 100%;
-    z-index: 2;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+    .tile img.player {
+        width: 100%;
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 
-.tile img {
-    position: relative;
-    width: 100%;
-    z-index: 1;
-    border: solid tan 1px;
-}
+    .tile img {
+        position: relative;
+        width: 100%;
+        z-index: 1;
+        border: solid tan 1px;
+    }
+
 .messagebox {
     width: 100%;
     font-size: 20px;
@@ -104,10 +116,12 @@ h6 {
 .cardgraphic {
     border: solid 3px darkred;
 }
+
 .innerborder {
     border: solid 3px goldenrod;
     padding: 5px;
 }
+
 .card {
     border: solid 1px darkred;
     text-align: center;
@@ -127,11 +141,19 @@ h6 {
 }
 
 
-.possibleMove img {
+.possiblemovered img {
     border: solid red 3px;
 }
 
-    .possibleMove img:hover {
+    .possiblemovered img:hover {
+        border: solid whitesmoke 3px;
+    }
+
+.possiblemoveblue img {
+    border: solid blue 3px;
+}
+
+    .possiblemoveblue img:hover {
         border: solid whitesmoke 3px;
     }
 
