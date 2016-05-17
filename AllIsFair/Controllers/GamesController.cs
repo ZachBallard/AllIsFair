@@ -141,21 +141,24 @@ namespace AllIsFair.Controllers
 
             if (playerResults != null)
             {
-                result.Event = new EventVM()
+                if (playerResults.Event != null)
                 {
-                    Name = playerResults.Event.Name,
-                    GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
-                    RequiredStat = playerResults.Event.RequiredStat.ToString(),
-                    TargetNumber = playerResults.Event.TargetNumber,
-                    Type = playerResults.Event.Type,
-                    StatReward = playerResults.Event.StatReward,
-                    Description = playerResults.Event.Description
-                };
+                    result.Event = new EventVM()
+                    {
+                        Name = playerResults.Event.Name,
+                        GraphicName = playerResults.Event.GraphicName == null ? "" : "/Graphics/" + playerResults.Event.GraphicName,
+                        RequiredStat = playerResults.Event.RequiredStat.ToString(),
+                        TargetNumber = playerResults.Event.TargetNumber,
+                        Type = playerResults.Event.Type,
+                        StatReward = playerResults.Event.StatReward,
+                        Description = playerResults.Event.Description
+                    };
 
-                if (playerResults.Event.ItemReward != null)
-                    result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
+                    if (playerResults.Event.ItemReward != null)
+                        result.ItemReward = new ItemVM(playerResults.Event.ItemReward);
+                }
 
-                result.Rolls = playerResults.Rolls.ToList();
+                result.Rolls = playerResults.Rolls.ConvertStringToNumberList();
                 result.DieResultGraphics = result.Rolls.GetDieGraphics();
                 result.StatReward = playerResults.StatReward;
             }
@@ -163,7 +166,7 @@ namespace AllIsFair.Controllers
             if (enemyResults == null) return result;
 
             result.IsAttack = true;
-            result.EnemyRolls = enemyResults.Rolls.ToList();
+            result.EnemyRolls = enemyResults.Rolls.ConvertStringToNumberList();
             result.DieResultEnemyGraphics = result.Rolls.GetDieGraphics();
             result.Healthloss = enemyResults.Healthloss;
 

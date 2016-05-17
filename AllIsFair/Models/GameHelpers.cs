@@ -7,6 +7,16 @@ namespace AllIsFair.Models
 {
     public static class GameHelpers
     {
+
+        public static List<int> ConvertStringToNumberList(this string s)
+        {
+           return s.Split(',').Select(int.Parse).ToList();
+        }
+
+        public static string ConvertNumberListToString(this IEnumerable<int> numbers)
+        {
+            return string.Join(",", numbers.ToList());
+        }
         public static List<int> RollDie(int number)
         {
             var allRolls = new List<int>();

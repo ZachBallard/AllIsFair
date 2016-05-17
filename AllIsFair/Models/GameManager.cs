@@ -461,7 +461,7 @@ namespace AllIsFair.Models
             attacker.Results.Add(new Result()
             {
                 TurnNumber = CurrentGame.CurrentTurnNumber,
-                Rolls = attackerRoll,
+                Rolls = attackerRoll.ConvertNumberListToString(),
                 IsAttack = true
             });
 
@@ -469,7 +469,7 @@ namespace AllIsFair.Models
             {
                 Healthloss = healthloss,
                 TurnNumber = CurrentGame.CurrentTurnNumber,
-                Rolls = defenderRoll,
+                Rolls = defenderRoll.ConvertNumberListToString(),
                 IsAttack = true
             });
 
@@ -561,7 +561,7 @@ namespace AllIsFair.Models
             {
                 TurnNumber = CurrentGame.CurrentTurnNumber,
                 Event = eventCard,
-                Rolls = dieResults,
+                Rolls = dieResults.ConvertNumberListToString(),
                 StatReward = statReward
             });
 

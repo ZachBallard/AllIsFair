@@ -26,7 +26,7 @@ namespace AllIsFair.Models
 
         public bool IsAttack { get; set; }
 
-        public virtual ICollection<int> Rolls { get; set; } = new List<int>();
+        public virtual string Rolls { get; set; }
         public virtual Event Event { get; set; }
         public virtual Combatant Combatant { get; set; }
     }

@@ -15,11 +15,11 @@
     </div>
 
     <div class="container bottombar" ng-if="game.Result.IsAttack && game.Result != null">
-        <div ng-repeat="r in game.Result.DieResultGraphics">
-            <img class="img-responsive" style="width: 100%;" ng-src="{{r}}" />
+        <div class="dieholder">
+            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
         </div>
-        <div ng-repeat="r in game.Result.DieResultEnemyGraphics">
-            <img class="img-responsive" style="width: 100%;" ng-src="{{r}}" />
+        <div class="dieholder">
+            <img ng-repeat="r in game.Result.DieResultEnemyGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
         </div>
         <div>
             <h6>{{game.Player.Name}} inflicted {{game.Result.Healthloss}} damage!</h6>
@@ -42,8 +42,8 @@
         </div>
         <h6>{{game.Result.Event.Description}}</h6>
 
-        <div ng-repeat="r in game.Result.DieResultGraphics">
-            <img class="img-responsive" style="width: 100%;" ng-src="{{game.Result.DieResultGraphics}}" />
+        <div class="dieholder">
+            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die"  ng-src="{{r}}" />
         </div>
         <div ng-if="game.Result.ItemReward != null">
             <div class="card">
@@ -64,8 +64,8 @@
             <h6>+ {{game.Result.StatReward}} to {{game.Result.Event.RequiredStat}}</h6>
         </div>
     </div>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <div class="row">
         <div class="col-xs-12 col-xs-offset-1">
             <div class="row bottombar stretchrow">

@@ -6,6 +6,13 @@
     background-size: cover;
 }
 
+.dieholder {
+    width: 80%;
+}
+.die {
+    width: 64px;
+    float: left;
+}
 .homelogo {
     padding: 1% 0%;
 }
