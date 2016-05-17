@@ -103,6 +103,10 @@ namespace AllIsFair.Models
         public List<int> EnemyRolls { get; set; } = new List<int>();
         public List<string> DieResultGraphics { get; set; } = new List<string>();
         public List<string> DieResultEnemyGraphics { get; set; } = new List<string>();
+
+        public int RollsSum { get; set; }
+        public int EnemyRollsSum { get; set; }
+
         public EventVM Event { get; set; }
         public ItemVM ItemReward { get; set; }
         public string PlayerName { get; set; }

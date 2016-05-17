@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace AllIsFair.Models
@@ -15,5 +16,7 @@ namespace AllIsFair.Models
         public int ThreatBonus { get; set; }
 
         public Combatant Combatant { get; set; }
+        //Issues
+        //public ICollection<Event> Event { get; set; }
     }
 }

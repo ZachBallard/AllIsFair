@@ -526,7 +526,7 @@ namespace AllIsFair.Models
             var dieResults = GameHelpers.RollDie(numOfDice);
             var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
 
-            var flip = failedRoll ? -1 : 1;
+            //var flip = failedRoll ? -1 : 1;
             var statReward = eventCard.StatReward; //* flip; Not implementing at this time
 
             if (statReward > 0)

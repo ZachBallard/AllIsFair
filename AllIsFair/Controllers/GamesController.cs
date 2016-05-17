@@ -63,13 +63,6 @@ namespace AllIsFair.Controllers
                     }).ToList()
             };
 
-
-
-
-
-          
-
-
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
@@ -131,6 +124,7 @@ namespace AllIsFair.Controllers
 
                 result.PlayerName = playerResults.Combatant.Name;
                 result.Rolls = playerResults.Rolls.ConvertStringToNumberList();
+                result.RollsSum = playerResults.RollsSum;
                 result.DieResultGraphics = result.Rolls.GetDieGraphics();
                 result.StatReward = playerResults.StatReward;
             }
@@ -140,6 +134,7 @@ namespace AllIsFair.Controllers
             
             result.IsAttack = true;
             result.EnemyRolls = enemyResults.Rolls.ConvertStringToNumberList();
+            result.EnemyRollsSum = enemyResults.RollsSum;
             result.DieResultEnemyGraphics = result.Rolls.GetDieGraphics();
             result.Healthloss = enemyResults.Healthloss;
 

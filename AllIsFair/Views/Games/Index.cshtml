@@ -16,23 +16,28 @@
 
     <div class="container bottombar" ng-if="game.Result.IsAttack && game.Result != null">
         <div class="dieholder">
-            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
+            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
         </div>
+        <br />
+        <h4 ng-if="game.Result.RollsSum != 0">{{game.Result.RollsSum}}</h4>
+        <br/>
         <div class="dieholder">
-            <img ng-repeat="r in game.Result.DieResultEnemyGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
+            <img ng-repeat="r in game.Result.DieResultEnemyGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
         </div>
+        <br/>
+        <h4 ng-if="game.Result.EnemyRollsSum != 0">{{game.Result.EnemyRollsSum}}</h4>
         <div>
             <h6>{{game.Result.Name}} inflicted {{game.Result.Healthloss}} damage!</h6>
         </div>
     </div>
 
-    <div class="container bottombar" ng-if="!game.Result.IsAttack && game.Result != null">
+    <div class="container bottombar" ng-if="!game.Result.IsAttack && game.Result.Event != null">
         <div class="card">
             <div class="innerborder">
                 <div class="cardtext">
                     <h4> {{game.Result.Event.Name}} </h4>
                 </div>
-                <img class="img-responsive cardgraphic" style="width: 100%;" ng-src="{{game.Result.Event.GraphicName}}" />
+                <img class="img-responsive cardgraphic" style="width: 100%;" ng-src="{{game.Result.Event.GraphicName}}"/>
                 <div class="cardtext">
                     <h6>Stat: {{game.Result.Event.RequiredStat}}</h6>
                     <h6>Stat Reward: +{{game.Result.Event.StatReward}}</h6>
@@ -40,11 +45,13 @@
                 </div>
             </div>
         </div>
-        <h6>{{game.Result.Event.Description}}</h6>
+        <br />
+        <h4>{{game.Result.Event.Description}}</h4>
 
         <div class="dieholder">
-            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die"  ng-src="{{r}}" />
+            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
         </div>
+        <h4 ng-if="game.Result.RollsSum != 0">{{game.Result.RollsSum}}</h4>
         <div ng-if="game.Result.ItemReward != null">
             <div class="card">
                 <div class="innerborder">

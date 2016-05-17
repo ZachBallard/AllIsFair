@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace AllIsFair.Models
 {
@@ -36,6 +37,8 @@ namespace AllIsFair.Models
         public int StatReward { get; set; }
 
         public bool IsAttack { get; set; }
+
+        public int RollsSum => Rolls.ConvertStringToNumberList().Sum();
 
         public virtual string Rolls { get; set; }
         public virtual Event Event { get; set; }
