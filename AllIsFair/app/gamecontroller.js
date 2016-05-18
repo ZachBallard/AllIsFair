@@ -16,9 +16,15 @@
             refreshGameState();
         }
 
+        function DeathState() {
+            if ($scope.game.GameOverInfo) {
+                console.log($scope.game.GameOverInfo);
+            }
+        }
         function refreshGameState() {
             $http.get("/games/getgamestate").then(function (res) {
                 $scope.game = res.data;
+                DeathState();
             });
         }
 
@@ -30,6 +36,7 @@
             $http.post("/games/trymove", { x2: tile.X, y2: tile.Y }).then(function (res) {
                 console.log(res.data);
                 $scope.game = res.data;
+                DeathState();
             });
         }
 

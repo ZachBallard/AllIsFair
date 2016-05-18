@@ -624,13 +624,14 @@ namespace AllIsFair.Models
 
         private void RemoveUsedUpItems()
         {
-            foreach (var item in CurrentPlayer.Items.Where(item => item.DoesCount))
+            var items = CurrentPlayer.Items.Where(item => item.DoesCount).ToList();
+            for (int i = items.Count() - 1; i >= 0; i--)
             {
-                item.Counter--;
+                items[i].Counter--;
 
-                if (item.Counter <= 0)
+                if (items[i].Counter <= 0)
                 {
-                    CurrentPlayer.Items.Remove(item);
+                    CurrentPlayer.Items.Remove(items[i]);
                 }
             }
         }

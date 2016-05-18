@@ -3,7 +3,7 @@ namespace AllIsFair.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialCreation : DbMigration
+    public partial class InitialCreate : DbMigration
     {
         public override void Up()
         {
@@ -12,7 +12,8 @@ namespace AllIsFair.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        CombatantTurn = c.Int(nullable: false),
+                        CurrentTurnNumber = c.Int(nullable: false),
+                        CurrentTurnOrder = c.Int(nullable: false),
                         Event_Id = c.Int(),
                         User_Id = c.String(nullable: false, maxLength: 128),
                     })
@@ -27,7 +28,7 @@ namespace AllIsFair.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        TurnNumber = c.Int(nullable: false),
+                        TurnOrder = c.Int(nullable: false),
                         Name = c.String(),
                         IsPlayer = c.Boolean(nullable: false),
                         Strength = c.Int(nullable: false),
@@ -57,11 +58,11 @@ namespace AllIsFair.Migrations
                         Message = c.String(),
                         Date = c.DateTime(nullable: false),
                         Combatant_Id = c.Int(),
-                        CurrentGame_Id = c.Int(),
+                        CurrentGame_Id = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Combatants", t => t.Combatant_Id)
-                .ForeignKey("dbo.Games", t => t.CurrentGame_Id)
+                .ForeignKey("dbo.Games", t => t.CurrentGame_Id, cascadeDelete: true)
                 .Index(t => t.Combatant_Id)
                 .Index(t => t.CurrentGame_Id);
             
@@ -79,12 +80,50 @@ namespace AllIsFair.Migrations
                         SurvivalBonus = c.Int(nullable: false),
                         ThreatBonus = c.Int(nullable: false),
                         Combatant_Id = c.Int(),
-                        Game_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Combatants", t => t.Combatant_Id)
-                .ForeignKey("dbo.Games", t => t.Game_Id)
+                .Index(t => t.Combatant_Id);
+            
+            CreateTable(
+                "dbo.Results",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        TurnNumber = c.Int(nullable: false),
+                        TurnOrder = c.Int(nullable: false),
+                        Healthloss = c.Int(nullable: false),
+                        StatReward = c.Int(nullable: false),
+                        IsAttack = c.Boolean(nullable: false),
+                        Rolls = c.String(),
+                        Combatant_Id = c.Int(),
+                        Event_Id = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Combatants", t => t.Combatant_Id)
+                .ForeignKey("dbo.Events", t => t.Event_Id)
                 .Index(t => t.Combatant_Id)
+                .Index(t => t.Event_Id);
+            
+            CreateTable(
+                "dbo.Events",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                        GraphicName = c.String(),
+                        RequiredStat = c.Int(nullable: false),
+                        TargetNumber = c.Int(nullable: false),
+                        Type = c.Int(nullable: false),
+                        StatReward = c.Int(nullable: false),
+                        Description = c.String(),
+                        ItemReward_Id = c.Int(),
+                        Game_Id = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Items", t => t.ItemReward_Id)
+                .ForeignKey("dbo.Games", t => t.Game_Id)
+                .Index(t => t.ItemReward_Id)
                 .Index(t => t.Game_Id);
             
             CreateTable(
@@ -101,30 +140,6 @@ namespace AllIsFair.Migrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Games", t => t.Game_Id, cascadeDelete: true)
                 .Index(t => t.Game_Id);
-            
-            CreateTable(
-                "dbo.Events",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Name = c.String(),
-                        GraphicName = c.String(),
-                        RequiredStat = c.Int(nullable: false),
-                        TargetNumber = c.Int(nullable: false),
-                        Type = c.Int(nullable: false),
-                        StatReward = c.Int(nullable: false),
-                        Description = c.String(),
-                        Game_Id = c.Int(nullable: false),
-                        ItemReward_Id = c.Int(),
-                        Game_Id1 = c.Int(),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Games", t => t.Game_Id, cascadeDelete: true)
-                .ForeignKey("dbo.Items", t => t.ItemReward_Id)
-                .ForeignKey("dbo.Games", t => t.Game_Id1)
-                .Index(t => t.Game_Id)
-                .Index(t => t.ItemReward_Id)
-                .Index(t => t.Game_Id1);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -203,13 +218,13 @@ namespace AllIsFair.Migrations
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Games", "User_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.Items", "Game_Id", "dbo.Games");
-            DropForeignKey("dbo.Events", "Game_Id1", "dbo.Games");
-            DropForeignKey("dbo.Games", "Event_Id", "dbo.Events");
-            DropForeignKey("dbo.Events", "ItemReward_Id", "dbo.Items");
             DropForeignKey("dbo.Events", "Game_Id", "dbo.Games");
+            DropForeignKey("dbo.Games", "Event_Id", "dbo.Events");
             DropForeignKey("dbo.Combatants", "Tile_Id", "dbo.Tiles");
             DropForeignKey("dbo.Tiles", "Game_Id", "dbo.Games");
+            DropForeignKey("dbo.Results", "Event_Id", "dbo.Events");
+            DropForeignKey("dbo.Events", "ItemReward_Id", "dbo.Items");
+            DropForeignKey("dbo.Results", "Combatant_Id", "dbo.Combatants");
             DropForeignKey("dbo.Combatants", "Killer_Id", "dbo.Combatants");
             DropForeignKey("dbo.Items", "Combatant_Id", "dbo.Combatants");
             DropForeignKey("dbo.GameActions", "CurrentGame_Id", "dbo.Games");
@@ -221,11 +236,11 @@ namespace AllIsFair.Migrations
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.Events", new[] { "Game_Id1" });
-            DropIndex("dbo.Events", new[] { "ItemReward_Id" });
-            DropIndex("dbo.Events", new[] { "Game_Id" });
             DropIndex("dbo.Tiles", new[] { "Game_Id" });
-            DropIndex("dbo.Items", new[] { "Game_Id" });
+            DropIndex("dbo.Events", new[] { "Game_Id" });
+            DropIndex("dbo.Events", new[] { "ItemReward_Id" });
+            DropIndex("dbo.Results", new[] { "Event_Id" });
+            DropIndex("dbo.Results", new[] { "Combatant_Id" });
             DropIndex("dbo.Items", new[] { "Combatant_Id" });
             DropIndex("dbo.GameActions", new[] { "CurrentGame_Id" });
             DropIndex("dbo.GameActions", new[] { "Combatant_Id" });
@@ -239,8 +254,9 @@ namespace AllIsFair.Migrations
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
-            DropTable("dbo.Events");
             DropTable("dbo.Tiles");
+            DropTable("dbo.Events");
+            DropTable("dbo.Results");
             DropTable("dbo.Items");
             DropTable("dbo.GameActions");
             DropTable("dbo.Combatants");
