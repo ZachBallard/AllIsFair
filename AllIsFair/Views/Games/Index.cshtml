@@ -1,7 +1,7 @@
 ﻿
 <div class="container" ng-controller="gamecontroller">
     <div class="row">
-        <div class="topbar" >
+        <div class="topbar">
             <form action="Delete" method="post" ng-if="game.Result.DieResultGraphics.length">
                 <input type="submit" class="restartbutton" name="Delete" value="Restart Game" />
             </form>
@@ -20,16 +20,16 @@
     <div class="container bottombar" ng-if="game.Result.IsAttack && game.Result != null">
         <h4>Attacker:</h4>
         <div class="dieholder">
-            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
+            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
         </div>
         <br />
         <h4 ng-if="game.Result.RollsSum != 0">{{game.Result.RollsSum}}</h4>
-        <br/>
+        <br />
         <h4>Defender:</h4>
         <div class="dieholder">
-            <img ng-repeat="r in game.Result.DieResultEnemyGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
+            <img ng-repeat="r in game.Result.DieResultEnemyGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
         </div>
-        <br/>
+        <br />
         <h4 ng-if="game.Result.EnemyRollsSum != 0">{{game.Result.EnemyRollsSum}}</h4>
         <div>
             <h6>{{game.Result.Name}} inflicted {{game.Result.Healthloss}} damage!</h6>
@@ -42,7 +42,7 @@
                 <div class="cardtext">
                     <h4> {{game.Result.Event.Name}} </h4>
                 </div>
-                <img class="img-responsive cardgraphic" style="width: 100%;" ng-src="{{game.Result.Event.GraphicName}}"/>
+                <img class="img-responsive cardgraphic" style="width: 100%;" ng-src="{{game.Result.Event.GraphicName}}" />
                 <div class="cardtext">
                     <h6>Stat: {{game.Result.Event.RequiredStat}}</h6>
                     <h6>Stat Reward: +{{game.Result.Event.StatReward}}</h6>
@@ -54,7 +54,7 @@
         <h4>{{game.Result.Event.Description}}</h4>
 
         <div class="dieholder">
-            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
+            <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}" />
         </div>
         <h4 ng-if="game.Result.RollsSum != 0">{{game.Result.RollsSum}}</h4>
         <div ng-if="game.Result.ItemReward != null">
@@ -99,22 +99,21 @@
         </div>
     </div>
 
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+    <!-- Modal -->
+    <div class="modal" id="gameOverModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Game Over</h4>
+                </div>
+                <div class="modal-body">
+                    {{ game.GameOverInfo.Killer}}
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-warning" href="@Url.Action("Delete")">New Game</a>
+                </div>
             </div>
         </div>
     </div>

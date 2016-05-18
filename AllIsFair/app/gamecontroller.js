@@ -19,6 +19,7 @@
         function DeathState() {
             if ($scope.game.GameOverInfo) {
                 console.log($scope.game.GameOverInfo);
+                $("#gameOverModal").modal();
             }
         }
         function refreshGameState() {
