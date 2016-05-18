@@ -15,7 +15,11 @@
         function activate() {
             refreshGameState();
         }
-
+        function ResultsShow() {
+            if ($scope.game.Result != null) {
+                $("#resultsModal").modal();
+            }
+        }
         function DeathState() {
             if ($scope.game.GameOverInfo) {
                 console.log($scope.game.GameOverInfo);
@@ -38,6 +42,7 @@
                 console.log(res.data);
                 $scope.game = res.data;
                 DeathState();
+                ResultsShow();
             });
         }
 

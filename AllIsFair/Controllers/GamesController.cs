@@ -75,7 +75,7 @@ namespace AllIsFair.Controllers
             var killAction = mgr.CurrentGame.GameActions.FirstOrDefault(x => x.Action == Action.Kill);
             if (killAction != null)
             {
-                model.GameOverInfo = new GameOverVM {Killer = killAction.Combatant.Name};
+                model.GameOverInfo = new GameOverVM {Killer = killAction.Combatant.Name, Killee = mgr.CurrentPlayer.Name};
 
             }
 
@@ -101,7 +101,7 @@ namespace AllIsFair.Controllers
         {
             mgr.DeleteGame();
 
-            return RedirectToAction("Index", "Games");
+            return RedirectToAction("Index");
         }
 
 
