@@ -139,8 +139,13 @@ h6 {
     background-color: black;
     margin: 5px;
 }
-
-
+.toplogo {
+    height: 50px; 
+    width: 150px;
+    background-color: whitesmoke;
+    border: 5px solid darkred;
+    padding: 2px;
+}
 .possiblemovered img {
     border: solid red 3px;
 }

@@ -18,12 +18,14 @@
     </div>
 
     <div class="container bottombar" ng-if="game.Result.IsAttack && game.Result != null">
+        <h4>Attacker:</h4>
         <div class="dieholder">
             <img ng-repeat="r in game.Result.DieResultGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
         </div>
         <br />
         <h4 ng-if="game.Result.RollsSum != 0">{{game.Result.RollsSum}}</h4>
         <br/>
+        <h4>Defender:</h4>
         <div class="dieholder">
             <img ng-repeat="r in game.Result.DieResultEnemyGraphics track by $index" class="img-responsive die" ng-src="{{r}}"/>
         </div>

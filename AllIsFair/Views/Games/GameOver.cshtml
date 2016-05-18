@@ -1,0 +1,11 @@
+﻿@model List<string>
+
+@{
+    ViewBag.Title = "GameOver";
+}
+
+<h2>GameOver</h2>
+<h4>@Model.deadDude was defeated by @Model.Killer.Name</h4>
+
+@Html.ActionLink("Play Again?", "Index");
+

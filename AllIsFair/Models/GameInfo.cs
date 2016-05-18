@@ -15,6 +15,14 @@ namespace AllIsFair.Models
         public string PlayerColor { get; set; }
         public ResultVM Result { get; set; } = new ResultVM();
         public List<GameActionVM> GameActions { get; set; } = new List<GameActionVM>();
+        public GameOverVM GameOverInfo { get; set; }
+    }
+
+    public class GameOverVM
+    {
+        public string Killer { get; set; }
+        public string Killee { get; set; }
+ 
     }
 
     public class GameActionVM

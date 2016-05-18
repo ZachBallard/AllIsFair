@@ -19,13 +19,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("All is Fair", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a href="@Url.Action("Index", "Home")"><img class="toplogo" src="@Url.Content("~/Graphics/allisfairlogo.png")" /></a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav"></ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
+        
     </div>
     <div class="container body-content">
         @RenderBody()

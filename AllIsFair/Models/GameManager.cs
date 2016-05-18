@@ -210,7 +210,7 @@ namespace AllIsFair.Models
                             SurvivalBonus = 1,
                             ThreatBonus = 1,
                             WeaponRange = 1,
-                            GraphicName = "adrenaline.png"
+                            GraphicName = "spear.png"
                         },
                     GraphicName = "luckyspear.png",
                     Type = EventType.Expanse
@@ -431,20 +431,27 @@ namespace AllIsFair.Models
                 }
             }
 
-            attacker.Tile.Combatant = null;
-            attacker.Tile = to;
-            RecordAction(Action.Move, $"Moved from {attacker.Tile.X},{attacker.Tile.Y} to {newX},{newY}.");
-            result.EventType = @to.Type;
+            var tileType = attacker.Tile.Type;
+            result.EventType = tileType;
+
+            if (attacker.Tile != to)
+            {
+                attacker.Tile.Combatant = null;
+                attacker.Tile = to;
+                RecordAction(Action.Move, $"Moved from {attacker.Tile.X},{attacker.Tile.Y} to {newX},{newY}.");
+                result.EventType = @to.Type;
+                tileType = @to.Type;
+            }
 
             if (@to.Type != EventType.None)
             {
-                DrawEventCard(CurrentPlayer, @to.Type);
+                DrawEventCard(CurrentPlayer, tileType);
             }
 
             ChangePlayer();
 
             _db.SaveChanges();
-           
+
             return result;
         }
 
@@ -489,7 +496,18 @@ namespace AllIsFair.Models
                 IsAttack = true
             });
 
-            RecordAction(Action.Move, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.");
+            if (defender.Health <= 0)
+            {
+                defender.Killer = attacker;
+                RecordAction(Action.Kill, $"Killed {to.Combatant.Name} at {@to.X},{@to.Y}.", attacker);
+
+            }
+            else
+            {
+                RecordAction(Action.Attack, $"Attacked {to.Combatant.Name} at {@to.X},{@to.Y}.", attacker);
+
+            }
+
             _db.SaveChanges();
 
             return true;
@@ -524,7 +542,7 @@ namespace AllIsFair.Models
             }
 
             var dieResults = GameHelpers.RollDie(numOfDice);
-            var failedRoll = dieResults.Sum() < eventCard.TargetNumber;
+            var successfulRoll = dieResults.Sum() >= eventCard.TargetNumber;
 
             //var flip = failedRoll ? -1 : 1;
             var statReward = eventCard.StatReward; //* flip; Not implementing at this time
@@ -548,9 +566,10 @@ namespace AllIsFair.Models
                 }
             }
 
-            if (!failedRoll && eventCard.ItemReward != null)
+            if (successfulRoll && eventCard.ItemReward != null)
             {
                 var itemReward = eventCard.ItemReward;
+                itemReward.Combatant = player;
 
                 if (itemReward.IsWeapon)
                 {

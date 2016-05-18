@@ -21,7 +21,7 @@ namespace AllIsFair.Models
         public int TargetNumber { get; set; }
         public EventType Type { get; set; } //which tile can draw
         public int StatReward { get; set; }
-        public Item ItemReward { get; set; }
+        public virtual Item ItemReward { get; set; }
         public string Description { get; set; }
 
     }

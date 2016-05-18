@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Mvc;
 using AllIsFair.Models;
 using Microsoft.AspNet.Identity;
@@ -69,6 +71,13 @@ namespace AllIsFair.Controllers
                         PlayerName = x.Combatant?.Name
                     }).ToList()
             };
+
+            var killAction = mgr.CurrentGame.GameActions.FirstOrDefault(x => x.Action == Action.Kill);
+            if (killAction != null)
+            {
+                model.GameOverInfo = new GameOverVM {Killer = killAction.Combatant.Name};
+
+            }
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -142,10 +151,16 @@ namespace AllIsFair.Controllers
             result.IsAttack = true;
             result.EnemyRolls = enemyResults.Rolls.ConvertStringToNumberList();
             result.EnemyRollsSum = enemyResults.RollsSum;
-            result.DieResultEnemyGraphics = result.Rolls.GetDieGraphics();
+            result.DieResultEnemyGraphics = result.EnemyRolls.GetDieGraphics();
             result.Healthloss = enemyResults.Healthloss;
 
             return result;
+        }
+
+        public ActionResult GameOver(string deadDude, string killer)
+        {
+            var names = new List<string>() {deadDude, killer};
+            return View(names);
         }
     }
 }

@@ -17,7 +17,8 @@ namespace AllIsFair.Models
         None,
         Move,
         Attack,
-        DrawEventCard
+        DrawEventCard,
+        Kill
     }
 
     public class GameAction
